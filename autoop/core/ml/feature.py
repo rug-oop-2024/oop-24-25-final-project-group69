@@ -7,6 +7,8 @@ from autoop.core.ml.dataset import Dataset
 
 class Feature(BaseModel):
     # attributes here
+    name: str = Field(default="")
+    type: str = Field(default="numerical"|"categorical")
 
-    def __str__(self):
-        raise NotImplementedError("To be implemented.")
+    def __str__(self) -> str:
+        return f'{self.name}'
