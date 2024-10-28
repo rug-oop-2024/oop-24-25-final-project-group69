@@ -3,8 +3,8 @@ from typing import Dict, List
 import base64
 
 class Artifact(BaseModel):
-    """
-    {
+    """Class Artifact
+    Attributes:
         "asset_path": "users/mo-assaf/models/yolov8.pth",
         "version": "1.0.2", 
         "data": b"binary_state_data",
@@ -15,7 +15,6 @@ class Artifact(BaseModel):
         "type": "model:torch",
         "tags": ["computer_vision", "object_detection"],
         "id": "{base64(asset_path)}:{version}"
-    }
     """
     
     type: str = Field(default="model:torch")
@@ -28,15 +27,24 @@ class Artifact(BaseModel):
     
     @property
     def id(self) -> str:
-        """Generate an ID based on base64 encoded asset_path and version."""
+        """Generate an ID based on base64 encoded asset_path and version
+        Returns:
+            str: an id
+        """
         encoded_path = base64.b64encode(self.asset_path.encode()).decode('utf-8')
         return f"{encoded_path}:{self.version}"
-    
+
     def read(self) -> bytes:
-        """Placeholder for reading artifact data."""
+        """Method for reading artifact data.
+        Returns:
+            bytes: read data
+        """
         return self.data
-    
+
     def save(self, data:bytes) -> bytes:
-        """Placeholder for saving artifact data."""
+        """Method for saving artifact data.
+        Returns:
+            bytes: saved data
+        """
         self.data = data
         return self.data

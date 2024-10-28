@@ -1,16 +1,16 @@
 from autoop.core.ml.model.model import Model
 import numpy as np
-from sklearn.linear_model import Lasso as SklearnLasso
+from sklearn.linear_model import LogisticRegression as LogReg
 
 
-class MultipleLinearRegression(Model):
+class LogisticRegression(Model):
     """
-    MultipleLinearRegression class: inherits from the Model class
+    LogisticRegression class: inherits from the Model class
 
     Constructor Arguments:
         Inherits those of the model class: _parameters
-        _model: initialized with an instance of the
-        Sklearn Lasso model with its default arguments
+        model: initialized with the Sklearn LogisticRegression model
+        with its default arguments
 
     Methods:
         fit
@@ -18,7 +18,7 @@ class MultipleLinearRegression(Model):
     """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__()
-        self._model = SklearnLasso(*args, **kwargs)
+        self._model = LogReg(*args, **kwargs)
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         """
@@ -34,11 +34,11 @@ class MultipleLinearRegression(Model):
         Returns:
             None
         """
-        # Use the sklearn Lasso's fit method
+        # Use the sklearn LogisticRegression's fit method
         self._model.fit(X, y)
         
-        # Add the coef_ and intercept_ parameters of the Sklearn Lasso model
-        # and the hyperparameters using Lasso's get_params() method
+        # Add the attributes of the Sklearn LogisticRegression model
+        # and the hyperparameters using LogisticRegression's get_params() method
         self._parameters = {
             "strict parameters": {
                 "coef": self._model.coef_,
@@ -58,6 +58,6 @@ class MultipleLinearRegression(Model):
         Returns:
             a numpy array of predictions
         """
-        # Use Sklearn Lasso's predict method
+        # Use Sklearn LogisticRegression's predict method
         predictions = self._model.predict(X)
         return predictions

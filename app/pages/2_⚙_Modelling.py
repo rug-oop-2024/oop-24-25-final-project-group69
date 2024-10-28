@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 
+from pathlib import Path
+
 from app.core.system import AutoMLSystem
 from autoop.core.ml.dataset import Dataset
 
@@ -18,4 +20,9 @@ automl = AutoMLSystem.get_instance()
 datasets = automl.registry.list(type="dataset")
 
 # your code here
+path = st.selectbox("Select a dataset", datasets)
 
+if path:
+    data_path = Path(path)
+
+    dataset = Dataset(data_path)

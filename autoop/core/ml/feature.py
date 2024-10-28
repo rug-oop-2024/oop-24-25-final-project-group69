@@ -8,7 +8,10 @@ from autoop.core.ml.dataset import Dataset
 class Feature(BaseModel):
     # attributes here
     name: str = Field(default="")
-    type: str = Field(default="numerical"|"categorical")
+    type: Literal['numerical', 'categorical'] = Field(default='numerical')
 
+
+
+    # maybe delete later
     def __str__(self) -> str:
         return f'{self.name}'
