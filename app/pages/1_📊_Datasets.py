@@ -11,6 +11,7 @@ automl = AutoMLSystem.get_instance()
 # this is useless imo
 datasets = automl.registry.list(type="dataset")
 
+st.write("Datasets")
 # your code here
 st.title("Datasets")
 

@@ -106,6 +106,7 @@ Pipeline(
         self._predictions = predictions
 
     def execute(self):
+        # Preprocess, split, and train the model as usual
         self._preprocess_features()
         self._split_data()
         self._train()
