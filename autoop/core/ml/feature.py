@@ -9,9 +9,3 @@ class Feature(BaseModel):
     # attributes here
     name: str = Field(default="")
     type: Literal['numerical', 'categorical'] = Field(default='numerical')
-
-
-
-    # maybe delete later
-    def __str__(self) -> str:
-        return f'{self.name}'

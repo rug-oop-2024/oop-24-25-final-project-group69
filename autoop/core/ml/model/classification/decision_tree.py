@@ -1,3 +1,4 @@
+from autoop.core.ml.artifact import Artifact
 from autoop.core.ml.model.model import Model
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier as DecTreeClass
@@ -5,7 +6,7 @@ from sklearn.tree import DecisionTreeClassifier as DecTreeClass
 
 class DecisionTreeClassifier(Model):
     """
-    DecisionTree class: inherits from the Model class
+    DecisionTreeClassifier class: inherits from the Model class
 
     Constructor Arguments:
         Inherits those of the model class: _parameters
@@ -15,14 +16,22 @@ class DecisionTreeClassifier(Model):
     Methods:
         fit
         predict
-
-    Properties:
-        parameters
     """
-    
+    _model = None
+    _artifact: Artifact
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__()
         self._model = DecTreeClass(*args, **kwargs)
+        self._artifact = Artifact(
+            type="model: Decision Tree Classifier",
+            name="Decision Tree Classifier",
+            asset_path="autoop.core.ml.model.classification.decision_tree_classifier.py",
+            tags=["classification", "decision tree"],
+            metadata={},
+            version="1.0.0",
+            data=None
+        )
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         """
@@ -35,11 +44,9 @@ class DecisionTreeClassifier(Model):
         Returns:
             None
         """
-        # Use Sklearn DecTreeClassifier's fit method
         self._model.fit(X, y)
 
-        # Add the attributes of the Sklearn DecTreeClassifier model
-        # and the hyperparameters using DecTreeClassifier's get_params() method
+        # Add model parameters to _parameters
         self._parameters = {
             "strict parameters": {
                 "classes": self._model.classes_,
@@ -49,10 +56,12 @@ class DecisionTreeClassifier(Model):
                 "n_features_in": self._model.n_features_in_,
                 "feature_names_in": self._model.feature_names_in_,
                 "n_outputs": self._model.n_outputs_,
-                "tree": self._model.tree_,
+                "tree": self._model.tree_
             },
             "hyperparameters": self._model.get_params()
         }
+
+        self._artifact.data = str(self._parameters).encode()
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """
@@ -62,7 +71,6 @@ class DecisionTreeClassifier(Model):
             X: a 2D array with each row containing features for new observations
 
         Returns:
-            A list of predicted class labels
+            a numpy array of predicted class labels
         """
-        # Use Sklearn DecTreeClassifier's predict method
         return self._model.predict(X)

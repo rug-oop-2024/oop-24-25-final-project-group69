@@ -57,11 +57,16 @@ class LocalStorage(Storage):
         if not os.path.exists(self._base_path):
             os.makedirs(self._base_path)
 
+    # STEP 4
     def save(self, data: bytes, key: str):
-        path = self._join_path(key)
+        # when the file was created,
+        # the asset's id was truncated at the semicolon :)))))
+        sanitized_key = key.replace(":", "_")
+        path = self._join_path(sanitized_key)
         # Ensure parent directories are created
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, 'wb') as f:
+            print(data)
             f.write(data)
 
     def load(self, key: str) -> bytes:

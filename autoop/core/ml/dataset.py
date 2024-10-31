@@ -9,7 +9,10 @@ class Dataset(Artifact):
         super().__init__(type="dataset", *args, **kwargs)
 
     @staticmethod
-    def from_dataframe(data: pd.DataFrame, name: str, asset_path: str, version: str="1.0.0") -> "Dataset":
+    def from_dataframe(data: pd.DataFrame,
+                       name: str,
+                       asset_path: str,
+                       version: str="1.0.0") -> "Dataset":
         return Dataset(
             name=name,
             asset_path=asset_path,
@@ -22,6 +25,6 @@ class Dataset(Artifact):
         csv = bytes.decode()
         return pd.read_csv(io.StringIO(csv))
     
-    def save(self, data: pd.DataFrame) -> bytes:
+    def save(self, data: pd.DataFrame) -> None:
         bytes = data.to_csv(index=False).encode()
         return super().save(bytes)

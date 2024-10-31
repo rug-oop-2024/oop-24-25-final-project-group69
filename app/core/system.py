@@ -13,6 +13,8 @@ class ArtifactRegistry():
         self._database = database
         self._storage = storage
 
+
+    # STEP 1
     def register(self, artifact: Artifact):
         # save the artifact in the storage
         self._storage.save(artifact.data, artifact.asset_path)
@@ -25,8 +27,9 @@ class ArtifactRegistry():
             "metadata": artifact.metadata,
             "type": artifact.type,
         }
+        print(artifact.id) 
         self._database.set(f"artifacts", artifact.id, entry)
-    
+
     def list(self, type: str=None) -> List[Artifact]:
         entries = self._database.list("artifacts")
         artifacts = []
@@ -61,7 +64,7 @@ class ArtifactRegistry():
         data = self._database.get("artifacts", artifact_id)
         self._storage.delete(data["asset_path"])
         self._database.delete("artifacts", artifact_id)
-    
+
 
 class AutoMLSystem:
     _instance = None

@@ -1,3 +1,4 @@
+from autoop.core.ml.artifact import Artifact
 from autoop.core.ml.model.model import Model
 import numpy as np
 from sklearn.svm import SVC
@@ -15,15 +16,22 @@ class SupportVectorMachine(Model):
     Methods:
         fit
         predict
-
-    Properties:
-        parameters
     """
-    
+    _model = None
+    _artifact: Artifact
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__()
         self._model = SVC(*args, **kwargs)
-        
+        self._artifact = Artifact(
+            type="model: Support Vector Machine",
+            name="Support Vector Machine",
+            asset_path="autoop.core.ml.model.classification.support_vector_machine.py",
+            tags=["classification", "svm"],
+            metadata={},
+            version="1.0.0",
+            data=None
+        )
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         """
@@ -36,11 +44,9 @@ class SupportVectorMachine(Model):
         Returns:
             None
         """
-        # Use the sklearn SVM's fit method
         self._model.fit(X, y)
 
-        # Add the attributes of the Sklearn SVM model
-        # and the hyperparameters using SVM's get_params() method
+        # Add model parameters to _parameters
         self._parameters = {
             "strict parameters": {
                 "class_weight": self._model.class_weight_,
@@ -57,11 +63,12 @@ class SupportVectorMachine(Model):
                 "n_support": self._model.n_support_,
                 "probA": self._model.probA_,
                 "probB": self._model.probB_,
-                "shape_fit": self._model.probB_
+                "shape_fit": self._model.shape_fit
             },
             "hyperparameters": self._model.get_params()
         }
 
+        self._artifact.data = str(self._parameters).encode()
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """
@@ -71,7 +78,6 @@ class SupportVectorMachine(Model):
             X: a 2D array with each row containing features for new observations
 
         Returns:
-            A list of predicted class labels
+            a numpy array of predicted class labels
         """
-        # Use Sklearn SVM's predict method
         return self._model.predict(X)

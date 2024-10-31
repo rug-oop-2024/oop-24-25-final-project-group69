@@ -2,6 +2,7 @@ from autoop.core.ml.model.model import Model
 import numpy as np
 from sklearn.linear_model import Lasso as SklearnLasso
 
+from autoop.core.ml.artifact import Artifact
 
 class MultipleLinearRegression(Model):
     """
@@ -16,9 +17,25 @@ class MultipleLinearRegression(Model):
         fit
         predict
     """
+    
+    _model = None
+    _artifact: Artifact
+    
     def __init__(self, *args, **kwargs) -> None:
         super().__init__()
         self._model = SklearnLasso(*args, **kwargs)
+        self._artifact = Artifact(
+            type="model: Multiple Linear Regressor",
+            name="Multiple Linear Regressor",
+            asset_path="autoop.core.ml.model.regression.multiple_linear_regression.py",
+            tags=["regression", "linear"],
+            metadata={
+                "experiment_id": "exp-123fbdiashdb",
+                "run_id": "run-12378yufdh89afd",
+            },
+            version="1.0.0",
+            data=None
+        )
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         """
@@ -46,6 +63,8 @@ class MultipleLinearRegression(Model):
             },
             "hyperparameters": self._model.get_params()
         }
+        
+        self._artifact.data = str(self._parameters).encode()
 
     def predict(self, X: np.ndarray) -> np.ndarray: 
         """

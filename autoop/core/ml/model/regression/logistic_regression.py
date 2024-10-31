@@ -1,3 +1,4 @@
+from autoop.core.ml.artifact import Artifact
 from autoop.core.ml.model.model import Model
 import numpy as np
 from sklearn.linear_model import LogisticRegression as LogReg
@@ -16,29 +17,36 @@ class LogisticRegression(Model):
         fit
         predict
     """
+    _model = None
+    _artifact: Artifact
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__()
         self._model = LogReg(*args, **kwargs)
+        self._artifact = Artifact(
+            type="model: Logistic Regression",
+            name="Logistic Regression",
+            asset_path="autoop.core.ml.model.classification.logistic_regression.py",
+            tags=["classification", "logistic"],
+            metadata={},
+            version="1.0.0",
+            data=None
+        )
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         """
         Fit method: fits the observations by calculating the optimal parameter
 
         Arguments:
-            observations: a 2D array with each row containing features
-            for each observation, with one column containing each feature
-            ground_truth: a 1D array containing, for each observation,
-            the value of the feature
-            that will be predicted for new observations
+            X: a 2D array with each row containing features for each observation
+            y: a 1D array containing the ground truth labels for the observations
 
         Returns:
             None
         """
-        # Use the sklearn LogisticRegression's fit method
         self._model.fit(X, y)
-        
-        # Add the attributes of the Sklearn LogisticRegression model
-        # and the hyperparameters using LogisticRegression's get_params() method
+
+        # Add model parameters to _parameters
         self._parameters = {
             "strict parameters": {
                 "coef": self._model.coef_,
@@ -47,17 +55,16 @@ class LogisticRegression(Model):
             "hyperparameters": self._model.get_params()
         }
 
+        self._artifact.data = str(self._parameters).encode()
+
     def predict(self, X: np.ndarray) -> np.ndarray: 
         """
-        Predict method: predicts the value of the feature for each observation
+        Predict method: predicts the label for each observation
 
         Arguments:
-            observations: a 2D array with each row containing features
-            for each new observation, with one column containing each feature
+            X: a 2D array with each row containing features for new observations
 
         Returns:
-            a numpy array of predictions
+            a numpy array of predicted labels
         """
-        # Use Sklearn LogisticRegression's predict method
-        predictions = self._model.predict(X)
-        return predictions
+        return self._model.predict(X)
