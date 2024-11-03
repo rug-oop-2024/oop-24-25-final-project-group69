@@ -12,7 +12,7 @@ datasets = automl.registry.list(type="dataset")
 st.write("Datasets")
 # your code here
 
-#load the dataset
+# load the dataset
 uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
 
 if uploaded_file is not None:
@@ -24,5 +24,5 @@ if uploaded_file is not None:
         asset_path="iris.csv"
     )
 
-    #saving the dataset
+    # saving the dataset
     automl.registry.register(dataset)

@@ -11,6 +11,7 @@ METRICS = [
     "micro_recall"
 ]
 
+
 def get_metric(name: str) -> "Metric":
     """Factory function to get a metric by name.
 
@@ -36,41 +37,51 @@ def get_metric(name: str) -> "Metric":
 
 
 class Metric(ABC):
-    
+
     """Base class for all metrics.
 
     """
-    # metrics take ground truth and prediction as input and return a real number
-    
+    # metrics take ground truth and prediction
+    # as input and return a real number
+
     @abstractmethod
-    def __call__(self, ground_truths: np.array, predictions: np.array) -> float:
+    def __str__(self) -> str:
+        pass
+ 
+    @abstractmethod
+    def __call__(self,
+                 ground_truths: np.array,
+                 predictions: np.array) -> float:
         """
         Abstract implementation of the __call__ method for
         each metric to be calculated when the class is called
-        
+
         Args:
             ground_truths(np.array): one-dimensional array with ground truths
             predictions(np.array): one-dimensional array with predictions
-            
+
         Returns:
             float: the value of the metric
         """
         pass
-    
+
     @abstractmethod
-    def evaluate(self, predictions: np.array, ground_truths: np.array) -> float:
+    def evaluate(self,
+                 predictions: np.array,
+                 ground_truths: np.array) -> float:
         """
         Abstract implementation of the __call__ method for
         each metric to be calculated when the class is called
-        
+
         Args:
             ground_truths(np.array): one-dimensional array with ground truths
             predictions(np.array): one-dimensional array with predictions
-            
+
         Returns:
             float: the value of the metric
         """
         pass
+
 
 class MeanSquaredError(Metric):
     """Class for the mean squared error metric
@@ -78,35 +89,44 @@ class MeanSquaredError(Metric):
     Inherits from:
         Metric
     """
-    def __call__(self, ground_truths: np.array, predictions: np.array) -> float:
-        """
-        Implementation of the __call__ method for
-        the MSE to be calculated when the class is called
-        with the formula: 
-        
-        Args:
-            ground_truths(np.array): one-dimensional array with ground truths
-            predictions(np.array): one-dimensional array with predictions
-        
-        Returns:
-            float: the value of MSE
-        """
-        return np.square(np.subtract(ground_truths, predictions)).mean()
     
-    def evaluate(self, predictions: np.array, ground_truths: np.array) -> float:
+    def __str__(self) -> str:
+        return "Mean Squared Error Metric"
+    
+    def __call__(self,
+                 ground_truths: np.array,
+                 predictions: np.array) -> float:
         """
         Implementation of the __call__ method for
         the MSE to be calculated when the class is called
         with the formula: 
-        
+
         Args:
             ground_truths(np.array): one-dimensional array with ground truths
             predictions(np.array): one-dimensional array with predictions
-        
+
         Returns:
             float: the value of MSE
         """
         return np.square(np.subtract(ground_truths, predictions)).mean()
+
+    def evaluate(self,
+                 predictions: np.array,
+                 ground_truths: np.array) -> float:
+        """
+        Implementation of the __call__ method for
+        the MSE to be calculated when the class is called
+        with the formula: 
+
+        Args:
+            ground_truths(np.array): one-dimensional array with ground truths
+            predictions(np.array): one-dimensional array with predictions
+
+        Returns:
+            float: the value of MSE
+        """
+        return np.square(np.subtract(ground_truths, predictions)).mean()
+
 
 class MeanAbsoluteError(Metric):
     """Class for the MAE metric
@@ -114,21 +134,13 @@ class MeanAbsoluteError(Metric):
     Inherits from:
         Metric
     """
-    def __call__(self, ground_truths: np.array, predictions: np.array) -> float:
-        """
-        Implementation of the __call__ method for
-        the MAE to be calculated when the class is called
-
-        Args:
-            ground_truths(np.array): one-dimensional array with ground truths
-            predictions(np.array): one-dimensional array with predictions
-
-        Returns:
-            float: the value of MAE
-        """
-        return np.abs(np.subtract(ground_truths, predictions)).mean()
     
-    def evaluate(self, predictions: np.array, ground_truths: np.array) -> float:
+    def __str__(self) -> str:
+        return "Mean Absolute Error Metric"
+    
+    def __call__(self,
+                 ground_truths: np.array,
+                 predictions: np.array) -> float:
         """
         Implementation of the __call__ method for
         the MAE to be calculated when the class is called
@@ -141,32 +153,58 @@ class MeanAbsoluteError(Metric):
             float: the value of MAE
         """
         return np.abs(np.subtract(ground_truths, predictions)).mean()
-      
+
+    def evaluate(self,
+                 predictions: np.array,
+                 ground_truths: np.array) -> float:
+        """
+        Implementation of the __call__ method for
+        the MAE to be calculated when the class is called
+
+        Args:
+            ground_truths(np.array): one-dimensional array with ground truths
+            predictions(np.array): one-dimensional array with predictions
+
+        Returns:
+            float: the value of MAE
+        """
+        return np.abs(np.subtract(ground_truths, predictions)).mean()
+
+
 class RSquared(Metric):
     """Class for the R^2 metric
 
     Inherits from:
         Metric
     """
-    def __call__(self, ground_truths: np.array, predictions: np.array) -> float:
-        """
-        Implementation of the __call__ method for
-        the R^2 to be calculated when the class is called
-
-        Args:
-            ground_truths(np.array): one-dimensional array with ground truths
-            predictions(np.array): one-dimensional array with predictions
-
-        Returns:
-            float: the value of R^2
-        """
-        corr_matrix = np.corrcoef(ground_truths, predictions)
-        corr = corr_matrix[0,1]
-        R_sq = corr**2
-        
-        return R_sq
     
-    def evaluate(self, predictions: np.array, ground_truths: np.array) -> float:
+    def __str__(self) -> str:
+        return "R Squared"
+    
+    def __call__(self,
+                 ground_truths: np.array,
+                 predictions: np.array) -> float:
+        """
+        Implementation of the __call__ method for
+        the R^2 to be calculated when the class is called
+
+        Args:
+            ground_truths(np.array):
+            one-dimensional array with ground truths
+            predictions(np.array): one-dimensional array with predictions
+
+        Returns:
+            float: the value of R^2
+        """
+        corr_matrix = np.corrcoef(ground_truths, predictions)
+        corr = corr_matrix[0,1]
+        R_sq = corr**2
+
+        return R_sq
+
+    def evaluate(self,
+                 predictions: np.array,
+                 ground_truths: np.array) -> float:
         """
         Implementation of the __call__ method for
         the R^2 to be calculated when the class is called
@@ -183,28 +221,21 @@ class RSquared(Metric):
         R_sq = corr**2
         
         return R_sq
+
 
 class Accuracy(Metric):
     """Class for the accuracy metric
 
     Inherits from:
         Metric
-    """ 
-    def __call__(self, ground_truths: np.array, predictions: np.array) -> float:
-        """
-        Implementation of the __call__ method for
-        the accuracy to be calculated when the class is called
-
-        Args:
-            ground_truths(np.array): one-dimensional array with ground truths
-            predictions(np.array): one-dimensional array with predictions
-
-        Returns:
-            float: the value of accuracy
-        """
-        return np.mean(ground_truths == predictions)
+    """
     
-    def evaluate(self, predictions: np.array, ground_truths: np.array) -> float:
+    def __str__(self) -> str:
+        return "Accuracy Metric"
+    
+    def __call__(self,
+                 ground_truths: np.array,
+                 predictions: np.array) -> float:
         """
         Implementation of the __call__ method for
         the accuracy to be calculated when the class is called
@@ -217,14 +248,38 @@ class Accuracy(Metric):
             float: the value of accuracy
         """
         return np.mean(ground_truths == predictions)
+
+    def evaluate(self,
+                 predictions: np.array,
+                 ground_truths: np.array) -> float:
+        """
+        Implementation of the __call__ method for
+        the accuracy to be calculated when the class is called
+
+        Args:
+            ground_truths(np.array):
+            one-dimensional array with ground truths
+            predictions(np.array): one-dimensional array with predictions
+
+        Returns:
+            float: the value of accuracy
+        """
+        return np.mean(ground_truths == predictions)
+
 
 class MicroPrecision(Metric):
     """Class for the micro-averaged precision metric
 
     Inherits from:
         Metric
-    """ 
-    def __call__(self, ground_truths: np.array, predictions: np.array) -> float:
+    """
+    
+    def __str__(self) -> str:
+        return "Micro Precission Metric"
+    
+    def __call__(self,
+                 ground_truths: np.array,
+                 predictions: np.array) -> float:
         """
         Implementation of the __call__ method for
         the micro-precision to be calculated when the class is called
@@ -238,11 +293,13 @@ class MicroPrecision(Metric):
         """
         TP = np.sum(ground_truths & predictions)
         FP = np.sum((1 - ground_truths) & predictions)
-        
+
         precision = TP / (TP + FP) if (TP + FP) > 0 else 0
         return precision
-    
-    def evaluate(self, predictions: np.array, ground_truths: np.array) -> float:
+
+    def evaluate(self,
+                 predictions: np.array,
+                 ground_truths: np.array) -> float:
         """
         Implementation of the __call__ method for
         the micro-precision to be calculated when the class is called
@@ -256,7 +313,7 @@ class MicroPrecision(Metric):
         """
         TP = np.sum(ground_truths & predictions)
         FP = np.sum((1 - ground_truths) & predictions)
-        
+
         precision = TP / (TP + FP) if (TP + FP) > 0 else 0
         return precision
 
@@ -266,8 +323,14 @@ class MicroRecall(Metric):
 
     Inherits from:
         Metric
-    """ 
-    def __call__(self, ground_truths: np.array, predictions: np.array) -> float:
+    """
+    
+    def __str__(self) -> str:
+        return "Micro Recall Metric"
+    
+    def __call__(self,
+                 ground_truths: np.array,
+                 predictions: np.array) -> float:
         """
         Implementation of the __call__ method for
         the micro-recall to be calculated when the class is called.
@@ -285,7 +348,9 @@ class MicroRecall(Metric):
         recall = TP / (TP + FN) if (TP + FN) > 0 else 0
         return recall
     
-    def evaluate(self, predictions: np.array, ground_truths: np.array) -> float:
+    def evaluate(self,
+                 predictions: np.array,
+                 ground_truths: np.array) -> float:
         """
         Implementation of the __call__ method for
         the micro-recall to be calculated when the class is called.

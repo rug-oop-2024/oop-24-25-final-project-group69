@@ -1,4 +1,3 @@
-
 from autoop.core.ml.model.model import Model
 from autoop.core.ml.model.regression.multiple_linear_regression import MultipleLinearRegression
 from autoop.core.ml.model.regression.quantile_regression import QuantileRegressor
@@ -8,18 +7,18 @@ from autoop.core.ml.model.classification.knn import KNearestNeighbors
 from autoop.core.ml.model.classification.svm import SupportVectorMachine
 
 
-
 REGRESSION_MODELS = [
-    "multiple_linear_regression",
-    "quantile_regressor",
-    "logistic_regression"
+    "Multiple Linear Regression",
+    "Quantile Regressor",
+    "Logistic Regression"
 ]
 
 CLASSIFICATION_MODELS = [
-    "knn",
-    "svm",
-    "decision_tree"
+    "K Nearest Neighbors",
+    "Support Vector Machine",
+    "Decision Tree"
 ]
+
 
 def get_model(model_name: str) -> Model:
     """Factory function to get a model by name.
@@ -28,15 +27,15 @@ def get_model(model_name: str) -> Model:
     Returns:
         Model: a model instance given its str name
     """
-    if model_name == "multiple_linear_regression":
+    if model_name == "Multiple Linear Regression":
         return MultipleLinearRegression()
-    if model_name == "quantile_regression":
+    if model_name == "Quantile Regressor":
         return QuantileRegressor()
-    if model_name == "logistic_regression":
+    if model_name == "Logistic Regression":
         return LogisticRegression()
-    if model_name == "knn":
+    if model_name == "K Nearest Neighbors":
         return KNearestNeighbors()
-    if model_name == "svm":
+    if model_name == "Support Vector Machine":
         return SupportVectorMachine()
-    if model_name == "decision_tree":
+    if model_name == "Decision Tree":
         return DecisionTreeClassifier()

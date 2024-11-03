@@ -1,10 +1,10 @@
-
 from abc import abstractmethod
 from pydantic import PrivateAttr
 from autoop.core.ml.artifact import Artifact
 import numpy as np
 from copy import deepcopy
 from typing import Literal
+
 
 class Model():
     """
@@ -18,6 +18,16 @@ class Model():
         predict
     """
     _parameters: dict = PrivateAttr(default=dict)
+    _type: str = PrivateAttr(default=str)
+
+    @property
+    def type(self) -> str:
+        """Getter for _type
+
+        Returns:
+            str: deepcopy of _type
+        """
+        return deepcopy(self._type)
 
     @property
     def parameters(self) -> str:
@@ -29,7 +39,7 @@ class Model():
         return deepcopy(self._parameters)
 
     @abstractmethod
-    def fit(self,  observations: np.ndarray, ground_truth: np.ndarray) -> None:
+    def fit(self, observations: np.ndarray, ground_truth: np.ndarray) -> None:
         """
         Abstract method fit: fits the observations for a given model
 

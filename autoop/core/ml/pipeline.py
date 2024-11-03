@@ -11,14 +11,41 @@ import numpy as np
 
 
 class Pipeline:
-    
+    """
+    A class to manage the machine learning pipeline, including data
+    preprocessing, model training, evaluation, and artifact management.
+
+    Attributes:
+        metrics (List[Metric]): A list of metrics used for evaluation.
+        dataset (Dataset): The dataset to be used in the pipeline.
+        model (Model): The model to be trained.
+        input_features (List[Feature]): A list of input features for the model.
+        target_feature (Feature): The target feature for prediction.
+        split (float): The proportion of the dataset to use for training.
+    """
+
     def __init__(self, 
                  metrics: List[Metric],
                  dataset: Dataset, 
                  model: Model,
                  input_features: List[Feature],
                  target_feature: Feature,
-                 split=0.8):
+                 split=0.8) -> None:
+        """
+        Initializes the Pipeline with the specified metrics, dataset, model,
+        input features, target feature, and data split ratio.
+
+        Args:
+            metrics (List[Metric]): List of metrics for evaluating the model.
+            dataset (Dataset): The dataset to use for training and testing.
+            model (Model): The model to be trained on the dataset.
+            input_features (List[Feature]): List of input features.
+            target_feature (Feature): The target feature for the prediction.
+            split (float): Proportion of data to use for training (default: 0.8).
+
+        Raises:
+            ValueError: If the target feature type does not match the model type.
+        """
         self._dataset = dataset
         self._model = model
         self._input_features = input_features
@@ -27,11 +54,20 @@ class Pipeline:
         self._artifacts = {}
         self._split = split
         if target_feature.type == "categorical" and model.type != "classification":
-            raise ValueError("Model type must be classification for categorical target feature")
+            raise ValueError("Model type must be classification for categorical "
+                             "target feature")
         if target_feature.type == "continuous" and model.type != "regression":
-            raise ValueError("Model type must be regression for continuous target feature")
+            raise ValueError("Model type must be regression for continuous "
+                             "target feature")
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """
+        Returns a string representation of the Pipeline instance, showing
+        key attributes.
+
+        Returns:
+            str: String representation of the Pipeline.
+        """
         return f"""
 Pipeline(
     model={self._model.type},
@@ -43,11 +79,24 @@ Pipeline(
 """
 
     @property
-    def model(self):
+    def model(self) -> Model:
+        """
+        Gets the model associated with the Pipeline.
+
+        Returns:
+            Model: The model instance used in the pipeline.
+        """
         return self._model
 
     @property
     def artifacts(self) -> List[Artifact]:
+        """
+        Generates a list of artifacts associated with the pipeline,
+        including feature preprocessors and the trained model.
+
+        Returns:
+            List[Artifact]: List of artifacts for the pipeline.
+        """
         artifacts = []
         for name, artifact in self._artifacts.items():
             artifact_type = artifact.get("type")
@@ -64,23 +113,41 @@ Pipeline(
             "target_feature": self._target_feature,
             "split": self._split,
         }
-        artifacts.append(Artifact(name="pipeline_config", data=pickle.dumps(pipeline_data)))
+        artifacts.append(Artifact(name="pipeline_config", 
+                                  data=pickle.dumps(pipeline_data)))
         artifacts.append(self.model.to_artifact(name=f"pipeline_model{self._model.type}"))
         return artifacts
-    
-    def _register_artifact(self, name: str, artifact):
+
+    def _register_artifact(self, name: str, artifact) -> None:
+        """
+        Registers an artifact within the pipeline for later retrieval.
+
+        Args:
+            name (str): The name of the artifact.
+            artifact: The artifact to register.
+        """
         self._artifacts[name] = artifact
 
-    def _preprocess_features(self):
-        (target_feature_name, target_data, artifact) = preprocess_features([self._target_feature], self._dataset)[0]
+    def _preprocess_features(self) -> None:
+        """
+        Preprocesses the features of the dataset, registering artifacts
+        for both input and target features.
+        """
+        (target_feature_name, target_data, artifact) = preprocess_features(
+            [self._target_feature], self._dataset)[0]
         self._register_artifact(target_feature_name, artifact)
         input_results = preprocess_features(self._input_features, self._dataset)
         for (feature_name, data, artifact) in input_results:
             self._register_artifact(feature_name, artifact)
         self._output_vector = target_data
-        self._input_vectors = [data for (feature_name, data, artifact) in input_results]
+        self._input_vectors = [data for (feature_name, data, artifact) 
+                               in input_results]
 
-    def _split_data(self):
+    def _split_data(self) -> None:
+        """
+        Splits the dataset into training and testing sets based on the
+        specified split ratio.
+        """
         split = self._split
         self._train_X = [vector[:int(split * len(vector))] for vector in self._input_vectors]
         self._test_X = [vector[int(split * len(vector)):] for vector in self._input_vectors]
@@ -88,25 +155,50 @@ Pipeline(
         self._test_y = self._output_vector[int(split * len(self._output_vector)):]
 
     def _compact_vectors(self, vectors: List[np.array]) -> np.array:
+        """
+        Concatenates a list of numpy arrays into a single 2D array.
+
+        Args:
+            vectors (List[np.array]): List of numpy arrays to concatenate.
+
+        Returns:
+            np.array: A single concatenated numpy array.
+        """
         return np.concatenate(vectors, axis=1)
 
-    def _train(self):
+    def _train(self) -> None:
+        """
+        Trains the model using the training dataset after compacting the
+        input vectors.
+        """
         X = self._compact_vectors(self._train_X)
         Y = self._train_y
         self._model.fit(X, Y)
 
-    def _evaluate(self):
+    def _evaluate(self) -> None:
+        """
+        Evaluates the model using the test dataset, calculating metrics
+        for model performance.
+        """
         X = self._compact_vectors(self._test_X)
         Y = self._test_y
         self._metrics_results = []
         predictions = self._model.predict(X)
         for metric in self._metrics:
             result = metric.evaluate(predictions, Y)
-            self._metrics_results.append((metric, result))
+            self._metrics_results.append((str(metric), float(result)))
         self._predictions = predictions
 
-    def execute(self):
-        # Preprocess, split, and train the model as usual
+    def execute(self) -> dict:
+        """
+        Executes the full pipeline process, including feature preprocessing,
+        data splitting, model training, and evaluation, returning metrics
+        and predictions.
+
+        Returns:
+            dict: A dictionary containing training metrics, test metrics,
+                  and predictions.
+        """
         self._preprocess_features()
         self._split_data()
         self._train()

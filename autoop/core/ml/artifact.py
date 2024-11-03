@@ -4,21 +4,19 @@ import base64
 
 import os
 
+
 class Artifact(BaseModel):
     """Class Artifact
     Attributes:
-        "asset_path": "users/mo-assaf/models/yolov8.pth",
-        "version": "1.0.2", 
-        "data": b"binary_state_data",
-        "metadata": {
-            "experiment_id": "exp-123fbdiashdb",
-            "run_id": "run-12378yufdh89afd",
-        },
-        "type": "model:torch",
-        "tags": ["computer_vision", "object_detection"],
-        "id": "{base64(asset_path)}:{version}"
+        "asset_path"
+        "version"
+        "data"
+        "metadata"
+        "type"
+        "tags"
+        "id"
     """
-    
+
     type: str = Field(default="")
     name: str = Field(default="")
     data: bytes = Field(default=b"")
@@ -26,7 +24,7 @@ class Artifact(BaseModel):
     asset_path: str = Field(default="")
     metadata: Dict[str, str] = Field(default_factory=dict)
     tags: List[str] = Field(default_factory=list)
-    
+
     """def __init__(self,
                  type: str,
                  name: str,
@@ -49,7 +47,8 @@ class Artifact(BaseModel):
         Returns:
             str: an id
         """
-        encoded_path = base64.b64encode(self.asset_path.encode()).decode('utf-8')
+        encoded_path = base64.b64encode(
+            self.asset_path.encode()).decode('utf-8')
         return f"{encoded_path}:{self.version}"
 
     def read(self) -> bytes:

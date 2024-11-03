@@ -4,9 +4,24 @@ import os
 
 from autoop.core.storage import Storage
 
-class Database():
 
-    def __init__(self, storage: Storage):
+class Database:
+    """
+    Manages data persistence using a specified storage backend, allowing
+    data to be loaded, retrieved, updated, and deleted.
+
+    Attributes:
+        _storage (Storage): The storage backend used for data persistence.
+        _data (dict): An in-memory dictionary for managing data operations.
+    """
+
+    def __init__(self, storage: Storage) -> None:
+        """
+        Initializes the Database with a storage instance and loads existing data.
+
+        Args:
+            storage (Storage): The storage instance for data persistence.
+        """
         self._storage = storage
         self._data = {}
         self._load()
@@ -42,8 +57,8 @@ class Database():
         if not self._data.get(collection, None):
             return None
         return self._data[collection].get(id, None)
-    
-    def delete(self, collection: str, id: str):
+
+    def delete(self, collection: str, id: str) -> None:
         """Delete a key from the database
         Args:
             collection (str): The collection to delete the data from
@@ -62,18 +77,19 @@ class Database():
         Args:
             collection (str): The collection to list the data from
         Returns:
-            List[Tuple[str, dict]]: A list of tuples containing the id and data for each item in the collection
+            List[Tuple[str, dict]]: A list of tuples containing
+            the id and data for each item in the collection
         """
         if not self._data.get(collection, None):
             return []
         return [(id, data) for id, data in self._data[collection].items()]
 
-    def refresh(self):
+    def refresh(self) -> None:
         """Refresh the database by loading the data from storage"""
         self._load()
 
     # STEP 3
-    def _persist(self):
+    def _persist(self) -> None:
         """Persist the data to storage"""
         for collection, data in self._data.items():
             if not data:
@@ -81,7 +97,8 @@ class Database():
             for id, item in data.items():
                 print(f"This is {item} the item")
                 print(id)
-                self._storage.save(json.dumps(item).encode(), f"{collection}{os.sep}{id}")
+                self._storage.save(json.dumps(item).encode(),
+                                   f"{collection}{os.sep}{id}")
 
         # for things that were deleted, we need to remove them from the storage
         keys = self._storage.list("")
@@ -89,8 +106,8 @@ class Database():
             collection, id = key.split(os.sep)[-2:]
             if not self._data.get(collection, id):
                 self._storage.delete(f"{collection}{os.sep}{id}")
-    
-    def _load(self):
+
+    def _load(self) -> None:
         """Load the data from storage"""
         self._data = {}
         for key in self._storage.list(""):
@@ -98,11 +115,9 @@ class Database():
             data = self._storage.load(f"{collection}{os.sep}{id}")
             # Ensure the collection exists in the dictionary
             try:
-            # Ensure the collection exists in the dictionary
                 if collection not in self._data:
                     self._data[collection] = {}
                 self._data[collection][id] = json.loads(data.decode())
             except json.decoder.JSONDecodeError:
-                print(f"Error decoding JSON for collection '{collection}' and id '{id}'. Data: {data.decode()}")
-                # Optionally, handle the error (e.g., skip, set to None, or log it)
+                print(f"Error decoding JSON for collection'{collection}' and id '{id}'. Data: {data.decode()}")
                 continue
