@@ -1,3 +1,4 @@
+import pickle
 from autoop.core.ml.artifact import Artifact
 from autoop.core.ml.model.model import Model
 import numpy as np
@@ -46,7 +47,7 @@ class QuantileRegressor(Model):
                 and persistence.
         """
         super().__init__()
-        self._type = "Regression model"
+        self._type = "regression"
         self._model = QuantReg(*args, **kwargs)
         self._parameters = {
             "hyperparameters": self._model.get_params()
@@ -58,7 +59,7 @@ class QuantileRegressor(Model):
             tags=["regression", "quantile"],
             metadata={},
             version="1.0.0",
-            data=str(self._parameters).encode()
+            data=pickle.dumps(self._parameters)
         )
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
@@ -88,7 +89,7 @@ class QuantileRegressor(Model):
             }
         })
 
-        self._artifact.data = str(self._parameters).encode()
+        self._artifact.data = pickle.dumps(self._parameters)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """

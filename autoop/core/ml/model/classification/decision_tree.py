@@ -1,3 +1,4 @@
+import pickle
 from autoop.core.ml.artifact import Artifact
 from autoop.core.ml.model.model import Model
 import numpy as np
@@ -23,7 +24,7 @@ class DecisionTreeClassifier(Model):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__()
-        self._type = "Classification model"
+        self._type = "classification"
         self._model = DecTreeClass(*args, **kwargs)
         self._parameters = {
             "hyperparameters": self._model.get_params()
@@ -36,7 +37,7 @@ class DecisionTreeClassifier(Model):
             tags=["classification", "decision tree"],
             metadata={},
             version="1.0.0",
-            data=str(self._parameters).encode()
+            data=pickle.dumps(self._parameters)
         )
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
@@ -65,13 +66,12 @@ class DecisionTreeClassifier(Model):
                 "max_features": self._model.max_features_,
                 "n_classes": self._model.n_classes_,
                 "n_features_in": self._model.n_features_in_,
-                "feature_names_in": self._model.feature_names_in_,
                 "n_outputs": self._model.n_outputs_,
                 "tree": self._model.tree_
             }
         })
 
-        self._artifact.data = str(self._parameters).encode()
+        self._artifact.data = pickle.dumps(self._parameters)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """

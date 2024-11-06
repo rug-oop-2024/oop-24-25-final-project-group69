@@ -202,24 +202,20 @@ class RSquared(Metric):
 
         return R_sq
 
-    def evaluate(self,
-                 predictions: np.array,
-                 ground_truths: np.array) -> float:
+    def evaluate(self, predictions: np.ndarray, ground_truths: np.ndarray) -> float:
         """
-        Implementation of the __call__ method for
-        the R^2 to be calculated when the class is called
-
+        Evaluate R^2 based on ground truths and predictions.
         Args:
-            ground_truths(np.array): one-dimensional array with ground truths
-            predictions(np.array): one-dimensional array with predictions
-
+            predictions (np.ndarray): Model predictions (1D array).
+            ground_truths (np.ndarray): Ground truth values (1D array).
         Returns:
-            float: the value of R^2
+            float: The R^2 score.
         """
+        ground_truths = ground_truths.flatten()
+        predictions = predictions.flatten()
         corr_matrix = np.corrcoef(ground_truths, predictions)
-        corr = corr_matrix[0,1]
-        R_sq = corr**2
-        
+        corr = corr_matrix[0, 1]
+        R_sq = corr ** 2
         return R_sq
 
 
@@ -311,6 +307,9 @@ class MicroPrecision(Metric):
         Returns:
             float: the value of micro-averaged precision
         """
+        ground_truths = ground_truths.astype(bool)
+        predictions = predictions.astype(bool)
+        
         TP = np.sum(ground_truths & predictions)
         FP = np.sum((1 - ground_truths) & predictions)
 
@@ -362,6 +361,9 @@ class MicroRecall(Metric):
         Returns:
             float: the value of micro-averaged recall
         """
+        ground_truths = ground_truths.astype(bool)
+        predictions = predictions.astype(bool)
+        
         TP = np.sum(ground_truths & predictions)
         FN = np.sum(ground_truths & (1 - predictions))
 

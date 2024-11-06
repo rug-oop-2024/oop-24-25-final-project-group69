@@ -1,3 +1,4 @@
+import pickle
 from autoop.core.ml.artifact import Artifact
 from autoop.core.ml.model.model import Model
 import numpy as np
@@ -40,7 +41,7 @@ class SupportVectorMachine(Model):
                 persistence.
         """
         super().__init__()
-        self._type = "Classification model"
+        self._type = "classification"
         self._model = SVC(*args, **kwargs)
         self._parameters = {
             "hyperparameters": self._model.get_params()
@@ -53,7 +54,7 @@ class SupportVectorMachine(Model):
             tags=["classification", "svm"],
             metadata={},
             version="1.0.0",
-            data=str(self._parameters).encode()
+            data=pickle.dumps(self._parameters)
         )
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
@@ -96,7 +97,7 @@ class SupportVectorMachine(Model):
             }
         })
 
-        self._artifact.data = str(self._parameters).encode()
+        self._artifact.data = pickle.dumps(self._parameters)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """

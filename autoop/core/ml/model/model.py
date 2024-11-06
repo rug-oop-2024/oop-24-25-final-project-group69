@@ -19,6 +19,7 @@ class Model():
     """
     _parameters: dict = PrivateAttr(default=dict)
     _type: str = PrivateAttr(default=str)
+    _artifact: Artifact
 
     @property
     def type(self) -> str:
@@ -70,3 +71,9 @@ class Model():
             a list of predictions
         """
         pass
+    
+    
+    # this is part of the extra requirements
+    def to_artifact(self, name: str) -> Artifact:
+        self._artifact.name = name
+        return self._artifact

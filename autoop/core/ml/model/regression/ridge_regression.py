@@ -1,19 +1,19 @@
 import pickle
 from autoop.core.ml.model.model import Model
 import numpy as np
-from sklearn.linear_model import Lasso as SklearnLasso
+from sklearn.linear_model import Ridge as SklearnRidge
 
 from autoop.core.ml.artifact import Artifact
 
 
-class MultipleLinearRegression(Model):
+class RidgeRegression(Model):
     """
-    MultipleLinearRegression class: inherits from the Model class
+    RidgeRegression class: inherits from the Model class
 
     Constructor Arguments:
         Inherits those of the model class: _parameters
         _model: initialized with an instance of the
-        Sklearn Lasso model with its default arguments
+        Sklearn Ridge model with its default arguments
 
     Methods:
         fit
@@ -25,18 +25,18 @@ class MultipleLinearRegression(Model):
 
     def __init__(self, *args, **kwargs) -> None:
         """
-        Initializes a Multiple Linear Regressor model
-        instance using SklearnLasso
+        Initializes a Ridge Regressor model
+        instance using SklearnRidge
         and sets up an artifact to store model metadata
         and manage storage info.
 
         Args:
             *args: Positional arguments passed to
-            the SklearnLasso initializer.
-            **kwargs: Keyword arguments passed to the SklearnLasso initializer.
+            the SklearnRidge initializer.
+            **kwargs: Keyword arguments passed to the SklearnRidge initializer.
 
         Attributes:
-            _model (SklearnLasso): The Multiple Linear Regressor model instance,
+            _model (SklearnRidge): The Ridge Regressor model instance,
                 set up with provided initialization arguments.
             _artifact (Artifact): An artifact representing the regressor model,
                 storing metadata such as type, name, tags, version, asset path,
@@ -44,16 +44,16 @@ class MultipleLinearRegression(Model):
         """
         super().__init__()
         self._type = "regression"
-        self._model = SklearnLasso(*args, **kwargs)
+        self._model = SklearnRidge(*args, **kwargs)
         self._parameters = {
             "hyperparameters": self._model.get_params()
         }
         self._artifact = Artifact(
-            type="model: Multiple Linear Regressor",
-            name="Multiple Linear Regressor",
+            type="model: Ridge Regressor",
+            name="Ridge Regressor",
             asset_path=
-            "autoop.core.ml.model.regression.multiple_linear_regression.py",
-            tags=["regression", "linear"],
+            "autoop.core.ml.model.regression.ridge_regression.py",
+            tags=["regression", "ridge"],
             metadata={
                 "experiment_id": "exp-123fbdiashdb",
                 "run_id": "run-12378yufdh89afd",
@@ -79,17 +79,17 @@ class MultipleLinearRegression(Model):
         """
         X = np.asarray(X)
         
-        # Use the sklearn Lasso's fit method
+        # Use the sklearn Ridge's fit method
         self._model.fit(X, y)
         
         # Add the coef_ and intercept_ parameters
-        # of the Sklearn Lasso model
-        # and the hyperparameters using Lasso's
+        # of the Sklearn Ridge model
+        # and the hyperparameters using Ridge's
         # get_params() method
         self._parameters.update({
             "strict parameters": {
                 "coef": self._model.coef_,
-                "intercept": self._model.intercept_
+                "intercept": self._model.intercept_,
             }
         })
 
@@ -109,6 +109,6 @@ class MultipleLinearRegression(Model):
         Returns:
             a numpy array of predictions
         """
-        # Use Sklearn Lasso's predict method
+        # Use Sklearn Ridge's predict method
         predictions = self._model.predict(X)
         return predictions
