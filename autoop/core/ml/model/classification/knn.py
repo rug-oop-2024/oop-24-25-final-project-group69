@@ -18,29 +18,31 @@ class KNearestNeighbors(Model):
         fit
         predict
     """
-    _model = None
-    _artifact: Artifact
 
     def __init__(self, *args, **kwargs) -> None:
         """
-        Initializes a K Nearest Neighbors (KNN)
-        model instance and prepares an associated artifact
-        for tracking model metadata and storage information.
+        Initializes a K Nearest Neighbors (KNN) model instance.
+
+        This constructor initializes a Sklearn KNeighborsClassifier model
+        and sets up the model's hyperparameters in the _parameters attribute.
+        It is called with any additional arguments passed to the parent class 
+        initializer, allowing customization of the KNeighborsClassifier's 
+        configuration.
 
         Args:
-            *args: Positional arguments passed
-            to the KNeighborsClassifier initializer.
-            **kwargs: Keyword arguments passed
-            to the KNeighborsClassifier initializer.
-        
+            *args: Positional arguments passed to the KNeighborsClassifier 
+            initializer.
+            **kwargs: Keyword arguments passed to the KNeighborsClassifier 
+            initializer.
+
         Attributes:
-            _model (KNeighborsClassifier): The K Nearest Neighbors
-            model instance initialized with provided arguments.
-            _artifact (Artifact): An artifact representing this KNN model,
-            including type, name, asset path, tags,
-                                metadata, version, and data.
-                                Used for model metadata management
-                                and persistence.
+            _type (str): The type of model, in this case, "classification".
+            _model (KNeighborsClassifier): The Sklearn KNeighborsClassifier 
+            model instance, configured with the provided initialization 
+            arguments.
+            _parameters (dict): A dictionary holding the hyperparameters 
+            of the model, initialized with the KNeighborsClassifier's 
+            parameters.
         """
         super().__init__()
         self._type = "classification"
@@ -48,16 +50,6 @@ class KNearestNeighbors(Model):
         self._parameters = {
             "hyperparameters": self._model.get_params()
         }
-        self._artifact = Artifact(
-            type="model: K Nearest Neighbors",
-            name="K Nearest Neighbors",
-            asset_path=
-            "autoop.core.ml.model.classification.k_nearest_neighbors.py",
-            tags=["classification", "knn"],
-            metadata={},
-            version="1.0.0",
-            data=pickle.dumps(self._parameters)
-        )
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         """
@@ -88,7 +80,6 @@ class KNearestNeighbors(Model):
             }
         })
 
-        self._artifact.data = pickle.dumps(self._parameters)
 
     def predict(self, X: np.ndarray) -> np.ndarray: 
         """

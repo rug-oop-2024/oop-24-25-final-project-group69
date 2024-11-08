@@ -1,16 +1,17 @@
 import pickle
 from autoop.core.ml.model.model import Model
 import numpy as np
-from sklearn.linear_model import Ridge as SklearnRidge
+from sklearn.linear_model import Lasso as SklearnLasso
 from autoop.core.ml.artifact import Artifact
+from sklearn.preprocessing import StandardScaler
 
-class RidgeRegression(Model):
+class MultipleLinearRegression(Model):
     """
-    RidgeRegression class: inherits from the Model class
+    LassoRegression class: inherits from the Model class
 
     Constructor Arguments:
         Inherits those of the model class: _parameters
-        _model: initialized with an instance of the Sklearn Ridge model 
+        _model: initialized with an instance of the Sklearn Lasso model
         with its default arguments
 
     Methods:
@@ -20,26 +21,29 @@ class RidgeRegression(Model):
 
     def __init__(self, *args, **kwargs) -> None:
         """
-        Initializes a Ridge Regressor model instance using SklearnRidge 
+        Initializes a Lasso Regressor model instance using SklearnLasso 
         and sets up an artifact to store model metadata and manage storage info.
 
         Args:
-            *args: Positional arguments passed to the SklearnRidge initializer.
-            **kwargs: Keyword arguments passed to the SklearnRidge initializer.
+            *args: Positional arguments passed to the SklearnLasso initializer.
+            **kwargs: Keyword arguments passed to the SklearnLasso initializer.
 
         Attributes:
             _type (str): The type of model, in this case, "regression".
-            _model (SklearnRidge): The Ridge Regressor model instance,
-            initialized with the provided arguments for Ridge.
+            _model (SklearnLasso): The Lasso Regressor model instance,
+            initialized with the provided arguments for Lasso.
             _parameters (dict): A dictionary holding the hyperparameters of 
-            the model, initialized with the Ridge model's parameters.
+            the model, initialized with the Lasso model's parameters.
+            _target_scaler (StandardScaler or None): A scaler for the target variable,
+            initialized as None but used for inverse transformation during prediction.
         """
         super().__init__()
         self._type = "regression"
-        self._model = SklearnRidge(*args, **kwargs)
+        self._model = SklearnLasso(alpha=0.001, *args, **kwargs)
         self._parameters = {
             "hyperparameters": self._model.get_params()
         }
+        self._target_scaler = None
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         """
@@ -54,17 +58,20 @@ class RidgeRegression(Model):
         """
         X = np.asarray(X)
         
-        # Use the sklearn Ridge's fit method
+        # Use the sklearn Lasso's fit method
         self._model.fit(X, y)
+
+        self._target_scaler = StandardScaler()
+        self._target_scaler.fit(y.reshape(-1, 1))
         
         # Add the coef_ and intercept_ parameters
-        # of the Sklearn Ridge model
-        # and the hyperparameters using Ridge's
+        # of the Sklearn Lasso model
+        # and the hyperparameters using Lasso's
         # get_params() method
         self._parameters.update({
             "strict parameters": {
                 "coef": self._model.coef_,
-                "intercept": self._model.intercept_,
+                "intercept": self._model.intercept_
             }
         })
 
@@ -79,5 +86,9 @@ class RidgeRegression(Model):
         Returns:
             A numpy array of predicted values for each observation.
         """
-        # Use Sklearn Ridge's predict method
-        return self._model.predict(X)
+        # Use Sklearn Lasso's predict method
+        predictions = self._model.predict(X)
+
+        # Inverse transform the predictions using the scaler
+        predictions = self._target_scaler.inverse_transform(predictions.reshape(-1, 1)).flatten()
+        return predictions

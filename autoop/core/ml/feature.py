@@ -19,4 +19,13 @@ class Feature(BaseModel):
     type: Literal['numerical', 'categorical'] = Field(default='numerical')
 
     def __str__(self) -> str:
+        """
+        Returns a string representation of the feature.
+
+        This method returns the name of the feature, which is typically used
+        for displaying or printing the feature in a readable format.
+
+        Returns:
+            str: The name of the feature.
+        """
         return f"{self.name}"

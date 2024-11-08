@@ -26,7 +26,6 @@ class Database:
         self._data = {}
         self._load()
 
-    # STEP 2
     def set(self, collection: str, id: str, entry: dict) -> dict:
         """Set a key in the database
         Args:
@@ -42,7 +41,6 @@ class Database:
         if not self._data.get(collection, None):
             self._data[collection] = {}
         self._data[collection][id] = entry
-        print(id)
         self._persist()
         return entry
 
@@ -88,17 +86,14 @@ class Database:
         """Refresh the database by loading the data from storage"""
         self._load()
 
-    # STEP 3
     def _persist(self) -> None:
         """Persist the data to storage"""
         for collection, data in self._data.items():
             if not data:
                 continue
             for id, item in data.items():
-                print(f"This is {item} the item")
-                print(id)
-                self._storage.save(json.dumps(item).encode(),
-                                   f"{collection}{os.sep}{id}")
+                self._storage.save(json.dumps(item).encode(), f"{collection}{os.sep}{id}")
+
 
         # for things that were deleted, we need to remove them from the storage
         keys = self._storage.list("")
@@ -114,10 +109,6 @@ class Database:
             collection, id = key.split(os.sep)[-2:]
             data = self._storage.load(f"{collection}{os.sep}{id}")
             # Ensure the collection exists in the dictionary
-            try:
-                if collection not in self._data:
-                    self._data[collection] = {}
-                self._data[collection][id] = json.loads(data.decode())
-            except json.decoder.JSONDecodeError:
-                print(f"Error decoding JSON for collection'{collection}' and id '{id}'. Data: {data.decode()}")
-                continue
+            if collection not in self._data:
+                self._data[collection] = {}
+            self._data[collection][id] = json.loads(data.decode())

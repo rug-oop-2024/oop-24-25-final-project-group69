@@ -1,11 +1,11 @@
-from pydantic import BaseModel, Field, PrivateAttr
+from pydantic import BaseModel, Field
 from typing import Dict, List
 import base64
 
 import os
 
 
-class Artifact(BaseModel):
+class Artifact():
     """Class Artifact
     Attributes:
         "asset_path"
@@ -17,29 +17,111 @@ class Artifact(BaseModel):
         "id"
     """
 
-    type: str = Field(default="")
-    name: str = Field(default="")
-    data: bytes = Field(default=b"")
-    version: str = Field(default="")
-    asset_path: str = Field(default="")
-    metadata: Dict[str, str] = Field(default_factory=dict)
-    tags: List[str] = Field(default_factory=list)
+    _type: str
+    _name: str
+    _data: bytes
+    _version: str
+    _asset_path: str
+    _metadata: Dict[str, str]
+    _tags: List[str]
 
-    """def __init__(self,
-                 type: str,
+    def __init__(self,
                  name: str,
                  data: bytes,
-                 version: str,
-                 asset_path: str,
-                 metadata: Dict[str, str],
-                 tags: List[str]) -> None:
-        self.name = name
-        self.asset_path = asset_path
-        self.version = version
-        self.data = data
-        self.metadata = metadata
-        self.tags = tags
-        self.type = type"""
+                 type: str="",
+                 version: str="",
+                 asset_path: str="",
+                 metadata: Dict[str, str]={},
+                 tags: List[str]=[]) -> None:
+        """
+        Initializes an Artifact instance with the specified attributes.
+
+        Args:
+            _type (str): The type of the artifact.
+            _name (str): The name of the artifact.
+            _data (bytes): The binary data associated with the artifact.
+            _version (str): The version of the artifact.
+            _asset_path (str): The file path where the artifact is stored.
+            _metadata (Dict[str, str]): A dictionary of metadata for the artifact.
+            _tags (List[str]): A list of tags associated with the artifact.
+        """
+        self._name = name
+        self._asset_path = asset_path
+        self._version = version
+        self._data = data
+        self._metadata = metadata
+        self._tags = tags
+        self._type = type
+
+    @property
+    def type(self) -> str:
+        """
+        Gets the type of the asset.
+
+        Returns:
+            str: The type of the asset.
+        """
+        return self._type
+
+    @property
+    def name(self) -> str:
+        """
+        Gets the name of the asset.
+
+        Returns:
+            str: The name of the asset.
+        """
+        return self._name
+
+    @property
+    def data(self) -> bytes:
+        """
+        Gets the binary data associated with the asset.
+
+        Returns:
+            bytes: The binary data of the asset.
+        """
+        return self._data
+
+    @property
+    def version(self) -> str:
+        """
+        Gets the version of the asset.
+
+        Returns:
+            str: The version of the asset.
+        """
+        return self._version
+
+    @property
+    def asset_path(self) -> str:
+        """
+        Gets the file path where the asset is stored.
+
+        Returns:
+            str: The file path of the asset.
+        """
+        return self._asset_path
+
+    @property
+    def metadata(self) -> Dict[str, str]:
+        """
+        Gets the metadata dictionary of the asset.
+
+        Returns:
+            Dict[str, str]: A dictionary containing the metadata of the asset.
+        """
+        return self._metadata
+
+    @property
+    def tags(self) -> List[str]:
+        """
+        Gets the tags associated with the asset.
+
+        Returns:
+            List[str]: A list of tags associated with the asset.
+        """
+        return self._tags
 
     @property
     def id(self) -> str:
@@ -65,6 +147,5 @@ class Artifact(BaseModel):
         """
         self.data = data
         os.makedirs(os.path.dirname(self.asset_path), exist_ok=True)
-        # Write data to file
         with open(self.asset_path, 'wb') as file:
             file.write(self.data)

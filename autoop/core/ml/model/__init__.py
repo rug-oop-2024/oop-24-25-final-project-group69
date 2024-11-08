@@ -1,21 +1,20 @@
 from autoop.core.ml.model.model import Model
-from autoop.core.ml.model.regression.multiple_linear_regression import MultipleLinearRegression
-from autoop.core.ml.model.regression.quantile_regression import QuantileRegressor
+from autoop.core.ml.model.regression.lasso_regression import MultipleLinearRegression
+from autoop.core.ml.model.regression.ard_regression import ARDRegression
 from autoop.core.ml.model.regression.ridge_regression import RidgeRegression
 from autoop.core.ml.model.classification.decision_tree import DecisionTreeClassifier
 from autoop.core.ml.model.classification.knn import KNearestNeighbors
-from autoop.core.ml.model.classification.svm import SupportVectorMachine
-
+from autoop.core.ml.model.classification.random_forest_classifier import RandomForestClassifier
 
 REGRESSION_MODELS = [
-    "Multiple Linear Regression",
-    "Quantile Regressor",
+    "Lasso Regression",
+    "ARD Regression",
     "Ridge Regression"
 ]
 
 CLASSIFICATION_MODELS = [
     "K Nearest Neighbors",
-    "Support Vector Machine",
+    "Random Forest Classifier",
     "Decision Tree"
 ]
 
@@ -27,15 +26,15 @@ def get_model(model_name: str) -> Model:
     Returns:
         Model: a model instance given its str name
     """
-    if model_name == "Multiple Linear Regression":
+    if model_name == "Lasso Regression":
         return MultipleLinearRegression()
-    if model_name == "Quantile Regressor":
-        return QuantileRegressor()
+    if model_name == "ARD Regression":
+        return ARDRegression()
     if model_name == "Ridge Regression":
         return RidgeRegression()
     if model_name == "K Nearest Neighbors":
         return KNearestNeighbors()
-    if model_name == "Support Vector Machine":
-        return SupportVectorMachine()
+    if model_name == "Random Forest Classifier":
+        return RandomForestClassifier()
     if model_name == "Decision Tree":
         return DecisionTreeClassifier()

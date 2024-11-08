@@ -79,6 +79,42 @@ Pipeline(
 """
 
     @property
+    def dataset(self) -> Dataset:
+        """
+        Retrieves the dataset associated with the pipeline.
+
+        Returns:
+            Dataset: The dataset instance used in the pipeline.
+        """
+        return self._dataset
+
+    @dataset.setter
+    def dataset(self, dataset: Dataset) -> None:
+        """
+        Sets the dataset for the pipeline.
+
+        Args:
+            dataset (Dataset): The dataset instance to be used in the pipeline.
+        
+        Raises:
+            ValueError: If the provided object is not of type Dataset.
+        """
+        if isinstance(dataset, Dataset):
+            self._dataset = dataset
+        else:
+            raise ValueError("Object is not of type Dataset")
+
+    @property
+    def metrics(self) -> list[Metric]:
+        """
+        Gets the metrics associated with the Pipeline.
+
+        Returns:
+            Model: The metrics instance used in the pipeline.
+        """
+        return self._metrics
+
+    @property
     def model(self) -> Model:
         """
         Gets the model associated with the Pipeline.
@@ -171,8 +207,11 @@ Pipeline(
         Trains the model using the training dataset after compacting the
         input vectors.
         """
+
         X = self._compact_vectors(self._train_X)
         Y = self._train_y
+        
+        print(X, Y)
         self._model.fit(X, Y)
 
     def _evaluate(self) -> None:
@@ -182,6 +221,7 @@ Pipeline(
         """
         X = self._compact_vectors(self._test_X)
         Y = self._test_y
+
         self._metrics_results = []
         predictions = self._model.predict(X)
         for metric in self._metrics:
@@ -208,15 +248,15 @@ Pipeline(
         test_predictions = self._predictions
 
         original_test_X, original_test_y = self._test_X, self._test_y
+        # the part of the dataset that was used for training is now tested
         self._test_X, self._test_y = self._train_X, self._train_y
-
         self._evaluate()
         train_metrics_results = self._metrics_results
-
+        # set the test data back to the original values
         self._test_X, self._test_y = original_test_X, original_test_y
 
         return {
             "train_metrics": train_metrics_results,
             "test_metrics": test_metrics_results,
-            "predictions": test_predictions,
+            "predictions": test_predictions
         }

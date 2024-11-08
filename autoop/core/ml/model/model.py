@@ -1,4 +1,5 @@
 from abc import abstractmethod
+import pickle
 from pydantic import PrivateAttr
 from autoop.core.ml.artifact import Artifact
 import numpy as np
@@ -17,8 +18,9 @@ class Model():
         fit
         predict
     """
-    _parameters: dict = PrivateAttr(default=dict)
-    _type: str = PrivateAttr(default=str)
+    _model = None
+    _parameters: dict
+    _type: str
     _artifact: Artifact
 
     @property
@@ -28,10 +30,10 @@ class Model():
         Returns:
             str: deepcopy of _type
         """
-        return deepcopy(self._type)
+        return self._type
 
     @property
-    def parameters(self) -> str:
+    def parameters(self) -> dict:
         """Getter for _parameters
 
         Returns:
@@ -51,9 +53,9 @@ class Model():
             the value of the feature that
             will be predicted for new observations
 
-    Returns:
-            None
-        """
+        Returns:
+                None
+            """
         pass
 
     @abstractmethod
@@ -71,9 +73,8 @@ class Model():
             a list of predictions
         """
         pass
-    
-    
-    # this is part of the extra requirements
+
     def to_artifact(self, name: str) -> Artifact:
-        self._artifact.name = name
+        data = pickle.dumps(self._parameters)
+        self._artifact = Artifact(name=name, data=data)
         return self._artifact

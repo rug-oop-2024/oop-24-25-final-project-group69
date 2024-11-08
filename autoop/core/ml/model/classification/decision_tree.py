@@ -12,33 +12,44 @@ class DecisionTreeClassifier(Model):
     Constructor Arguments:
         Inherits those of the model class: _parameters
         model: initialized with the Sklearn DecisionTreeClassifier
-        model
-        with its default arguments
+        model with its default arguments
 
     Methods:
         fit
         predict
     """
-    _model = None
-    _artifact: Artifact
 
     def __init__(self, *args, **kwargs) -> None:
+        """
+        Initializes a DecisionTreeClassifier model instance.
+
+        This constructor initializes a Sklearn DecisionTreeClassifier model 
+        and sets up the model's hyperparameters in the _parameters attribute. 
+        It is called with any additional arguments passed to the parent class 
+        initializer, allowing customization of the DecisionTreeClassifier's 
+        configuration.
+
+        Args:
+            *args: Positional arguments passed to the DecisionTreeClassifier 
+            initializer.
+            **kwargs: Keyword arguments passed to the DecisionTreeClassifier 
+            initializer.
+
+        Attributes:
+            _type (str): The type of model, in this case, "classification".
+            _model (DecTreeClass): The Sklearn DecisionTreeClassifier model 
+            instance, configured with the provided initialization arguments.
+            _parameters (dict): A dictionary holding the hyperparameters 
+            of the model, initialized with the DecisionTreeClassifier's 
+            parameters.
+        """
         super().__init__()
         self._type = "classification"
         self._model = DecTreeClass(*args, **kwargs)
         self._parameters = {
             "hyperparameters": self._model.get_params()
         }
-        self._artifact = Artifact(
-            type="model: Decision Tree Classifier",
-            name="Decision Tree Classifier",
-            asset_path=
-            "autoop.core.ml.model.classification.decision_tree_classifier.py",
-            tags=["classification", "decision tree"],
-            metadata={},
-            version="1.0.0",
-            data=pickle.dumps(self._parameters)
-        )
+
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         """
@@ -71,7 +82,6 @@ class DecisionTreeClassifier(Model):
             }
         })
 
-        self._artifact.data = pickle.dumps(self._parameters)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """
