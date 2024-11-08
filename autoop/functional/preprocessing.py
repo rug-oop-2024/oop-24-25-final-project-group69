@@ -23,8 +23,9 @@ def preprocess_features(features: List[Feature],
             encoder = OneHotEncoder()
             data = encoder.fit_transform(
                 raw[feature.name].values.reshape(-1, 1)).toarray()
-            aritfact = {"type": "OneHotEncoder", "encoder":
-                encoder.get_params()}
+            aritfact = {
+                "type": "OneHotEncoder",
+                "encoder": encoder.get_params()}
             results.append((feature.name, data, aritfact))
         if feature.type == "numerical":
             scaler = StandardScaler()

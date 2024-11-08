@@ -49,9 +49,8 @@ def select_features(features: list[Feature]) -> tuple[list[Feature],
         st.error(f"Maximum {len(feature_names) - 1} features.")
     elif len(selected_input_features) == len(feature_names) - 1:
         selected_target_feature = [
-            name for name in feature_names if(
-                name not in selected_input_features
-                )
+            name for name in feature_names if (
+                name not in selected_input_features)
         ][0]
 
         st.write(f"Input features: {selected_input_features}")

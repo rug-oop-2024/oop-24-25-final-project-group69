@@ -1,10 +1,10 @@
 """
-This module contains the factory function for retrieving machine learning models 
-from predefined sets of regression and classification models. It includes models 
-such as Lasso Regression, Ridge Regression, K-Nearest Neighbors, Random Forest, 
+This module contains the factory function for retrieving machine learning models
+from predefined sets of regression and classification models. It includes models
+such as Lasso Regression, Ridge Regression, K-Nearest Neighbors, Random Forest,
 and Decision Trees.
 
-The available models are grouped into two categories: REGRESSION_MODELS and 
+The available models are grouped into two categories: REGRESSION_MODELS and
 CLASSIFICATION_MODELS.
 
 Functions:

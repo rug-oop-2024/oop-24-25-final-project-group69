@@ -85,7 +85,9 @@ class MeanSquaredError(Metric):
         Mean Squared Error metric."""
         return "Mean Squared Error Metric"
 
-    def __call__(self, ground_truths: np.array, predictions: np.array) -> float:
+    def __call__(self,
+                 ground_truths: np.array,
+                 predictions: np.array) -> float:
         """Calculate the Mean Squared Error (MSE) between the ground truths and
         predictions."""
         return np.square(np.subtract(ground_truths, predictions)).mean()

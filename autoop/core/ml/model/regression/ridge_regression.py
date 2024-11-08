@@ -20,7 +20,8 @@ class RidgeRegression(Model):
     def __init__(self, *args, **kwargs) -> None:
         """
         Initializes a Ridge Regressor model instance using SklearnRidge
-        and sets up an artifact to store model metadata and manage storage info.
+        and sets up an artifact to store model
+        metadata and manage storage info.
 
         Args:
             *args: Positional arguments passed to the SklearnRidge
