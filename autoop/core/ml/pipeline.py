@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List
 import pickle
 
 from autoop.core.ml.artifact import Artifact
@@ -24,13 +24,13 @@ class Pipeline:
         split (float): The proportion of the dataset to use for training.
     """
 
-    def __init__(self, 
+    def __init__(self,
                  metrics: List[Metric],
-                 dataset: Dataset, 
+                 dataset: Dataset,
                  model: Model,
                  input_features: List[Feature],
                  target_feature: Feature,
-                 split=0.8) -> None:
+                 split: float = 0.8) -> None:
         """
         Initializes the Pipeline with the specified metrics, dataset, model,
         input features, target feature, and data split ratio.
@@ -41,10 +41,12 @@ class Pipeline:
             model (Model): The model to be trained on the dataset.
             input_features (List[Feature]): List of input features.
             target_feature (Feature): The target feature for the prediction.
-            split (float): Proportion of data to use for training (default: 0.8).
+            split (float): Proportion of data to use for training
+            (default: 0.8).
 
         Raises:
-            ValueError: If the target feature type does not match the model type.
+            ValueError: If the target feature type does not match
+            the model type.
         """
         self._dataset = dataset
         self._model = model
@@ -53,8 +55,10 @@ class Pipeline:
         self._metrics = metrics
         self._artifacts = {}
         self._split = split
-        if target_feature.type == "categorical" and model.type != "classification":
-            raise ValueError("Model type must be classification for categorical "
+        if (target_feature.type == "categorical"
+            and model.type != "classification"):
+            raise ValueError("Model type must be classification"
+                             "for categorical "
                              "target feature")
         if target_feature.type == "continuous" and model.type != "regression":
             raise ValueError("Model type must be regression for continuous "
@@ -95,7 +99,7 @@ Pipeline(
 
         Args:
             dataset (Dataset): The dataset instance to be used in the pipeline.
-        
+
         Raises:
             ValueError: If the provided object is not of type Dataset.
         """
@@ -149,12 +153,15 @@ Pipeline(
             "target_feature": self._target_feature,
             "split": self._split,
         }
-        artifacts.append(Artifact(name="pipeline_config", 
+        artifacts.append(Artifact(name="pipeline_config",
                                   data=pickle.dumps(pipeline_data)))
-        artifacts.append(self.model.to_artifact(name=f"pipeline_model{self._model.type}"))
+        artifacts.append(self.model.to_artifact(
+            name=f"pipeline_model{self._model.type}"))
         return artifacts
 
-    def _register_artifact(self, name: str, artifact) -> None:
+    def _register_artifact(self,
+                           name: str,
+                           artifact: Artifact) -> None:
         """
         Registers an artifact within the pipeline for later retrieval.
 
@@ -172,11 +179,12 @@ Pipeline(
         (target_feature_name, target_data, artifact) = preprocess_features(
             [self._target_feature], self._dataset)[0]
         self._register_artifact(target_feature_name, artifact)
-        input_results = preprocess_features(self._input_features, self._dataset)
+        input_results = preprocess_features(self._input_features,
+                                            self._dataset)
         for (feature_name, data, artifact) in input_results:
             self._register_artifact(feature_name, artifact)
         self._output_vector = target_data
-        self._input_vectors = [data for (feature_name, data, artifact) 
+        self._input_vectors = [data for (feature_name, data, artifact)
                                in input_results]
 
     def _split_data(self) -> None:
@@ -185,10 +193,14 @@ Pipeline(
         specified split ratio.
         """
         split = self._split
-        self._train_X = [vector[:int(split * len(vector))] for vector in self._input_vectors]
-        self._test_X = [vector[int(split * len(vector)):] for vector in self._input_vectors]
-        self._train_y = self._output_vector[:int(split * len(self._output_vector))]
-        self._test_y = self._output_vector[int(split * len(self._output_vector)):]
+        self._train_X = [
+            vector[:int(split * len(vector))] for vector in self._input_vectors]
+        self._test_X = [
+            vector[int(split * len(vector)):] for vector in self._input_vectors]
+        self._train_y = self._output_vector[
+            :int(split * len(self._output_vector))]
+        self._test_y = self._output_vector[
+            int(split * len(self._output_vector)):]
 
     def _compact_vectors(self, vectors: List[np.array]) -> np.array:
         """
@@ -210,7 +222,7 @@ Pipeline(
 
         X = self._compact_vectors(self._train_X)
         Y = self._train_y
-        
+
         print(X, Y)
         self._model.fit(X, Y)
 

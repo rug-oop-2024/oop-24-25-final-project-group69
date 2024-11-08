@@ -1,5 +1,3 @@
-import pickle
-from autoop.core.ml.artifact import Artifact
 from autoop.core.ml.model.model import Model
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier as RandForClassifier
@@ -26,11 +24,14 @@ class RandomForestClassifier(Model):
         and storage information.
 
         Args:
-            *args: Positional arguments passed to the RandomForestClassifier initializer.
-            **kwargs: Keyword arguments passed to the RandomForestClassifier initializer.
+            *args: Positional arguments passed
+            to the RandomForestClassifier initializer.
+            **kwargs: Keyword arguments passed
+            to the RandomForestClassifier initializer.
 
         Attributes:
-            _model (RandomForestClassifier): The Random Forest Classifier model instance
+            _model (RandomForestClassifier):
+            The Random Forest Classifier model instance
             initialized with provided arguments.
         """
         super().__init__()
@@ -53,7 +54,7 @@ class RandomForestClassifier(Model):
             None
         """
         X = np.asarray(X)
-        
+
         self._model.fit(X, y)
 
         # Add model parameters to _parameters
@@ -69,13 +70,13 @@ class RandomForestClassifier(Model):
             }
         })
 
-
-    def predict(self, X: np.ndarray) -> np.ndarray: 
+    def predict(self, X: np.ndarray) -> np.ndarray:
         """
         Predict method: predicts the label for each observation.
 
         Arguments:
-            X: a 2D array with each row containing features for new observations.
+            X: a 2D array with each row containing features\
+            for new observations.
 
         Returns:
             a numpy array of predicted labels.

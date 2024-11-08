@@ -1,10 +1,8 @@
 from abc import abstractmethod
 import pickle
-from pydantic import PrivateAttr
 from autoop.core.ml.artifact import Artifact
 import numpy as np
 from copy import deepcopy
-from typing import Literal
 
 
 class Model():
@@ -75,6 +73,17 @@ class Model():
         pass
 
     def to_artifact(self, name: str) -> Artifact:
+        """
+        Serialize the model's parameters and
+        return them as an Artifact.
+
+        Args:
+            name (str): The name to assign to the artifact.
+
+        Returns:
+            Artifact: The artifact containing the serialized
+            model parameters.
+        """
         data = pickle.dumps(self._parameters)
         self._artifact = Artifact(name=name, data=data)
         return self._artifact

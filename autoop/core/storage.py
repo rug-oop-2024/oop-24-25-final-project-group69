@@ -3,6 +3,7 @@ import os
 from typing import List
 from glob import glob
 
+
 class NotFoundError(Exception):
     """
     Exception raised when a specified path is not found.
@@ -16,6 +17,7 @@ class NotFoundError(Exception):
             path (str): The path that was not found.
         """
         super().__init__(f"Path not found: {path}")
+
 
 class Storage(ABC):
     """
@@ -69,6 +71,7 @@ class Storage(ABC):
         """
         pass
 
+
 class LocalStorage(Storage):
     """
     Local storage implementation for saving and loading files on disk.
@@ -79,7 +82,8 @@ class LocalStorage(Storage):
         Initializes LocalStorage with a specified base path.
 
         Args:
-            base_path (str): The base path for storing assets (default: "./assets").
+            base_path (str): The base path for storing assets
+            (default: "./assets").
         """
         self._base_path = os.path.normpath(base_path)
         if not os.path.exists(self._base_path):
@@ -150,7 +154,7 @@ class LocalStorage(Storage):
         path = self._join_path(prefix)
         self._assert_path_exists(path)
         keys = glob(os.path.join(path, "**", "*"), recursive=True)
-        return [os.path.relpath(p, self._base_path) for p in keys 
+        return [os.path.relpath(p, self._base_path) for p in keys
                 if os.path.isfile(p)]
 
     def _assert_path_exists(self, path: str) -> None:

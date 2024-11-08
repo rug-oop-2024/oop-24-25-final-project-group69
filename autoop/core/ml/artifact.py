@@ -1,4 +1,3 @@
-from pydantic import BaseModel, Field
 from typing import Dict, List
 import base64
 
@@ -28,11 +27,11 @@ class Artifact():
     def __init__(self,
                  name: str,
                  data: bytes,
-                 type: str="",
-                 version: str="",
-                 asset_path: str="",
-                 metadata: Dict[str, str]={},
-                 tags: List[str]=[]) -> None:
+                 type: str = "",
+                 version: str = "",
+                 asset_path: str = "",
+                 metadata: Dict[str, str] = {},
+                 tags: List[str] = []) -> None:
         """
         Initializes an Artifact instance with the specified attributes.
 
@@ -42,7 +41,8 @@ class Artifact():
             _data (bytes): The binary data associated with the artifact.
             _version (str): The version of the artifact.
             _asset_path (str): The file path where the artifact is stored.
-            _metadata (Dict[str, str]): A dictionary of metadata for the artifact.
+            _metadata (Dict[str, str]): A dictionary of metadata for
+            the artifact.
             _tags (List[str]): A list of tags associated with the artifact.
         """
         self._name = name

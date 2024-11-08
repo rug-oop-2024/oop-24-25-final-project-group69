@@ -1,9 +1,6 @@
 
 from pydantic import BaseModel, Field
 from typing import Literal
-import numpy as np
-
-from autoop.core.ml.dataset import Dataset
 
 
 class Feature(BaseModel):
@@ -12,8 +9,9 @@ class Feature(BaseModel):
 
     Attributes:
         name (str): The name of the feature, default is an empty string.
-        type (Literal['numerical', 'categorical']): Specifies the type of the feature, either
-                                                    'numerical' or 'categorical'. Defaults to 'numerical'.
+        type (Literal['numerical', 'categorical']): Specifies the type of
+        the feature, either 'numerical' or 'categorical'. Defaults to
+        'numerical'.
     """
     name: str = Field(default="")
     type: Literal['numerical', 'categorical'] = Field(default='numerical')

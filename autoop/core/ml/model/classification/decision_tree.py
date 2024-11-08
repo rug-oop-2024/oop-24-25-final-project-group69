@@ -1,5 +1,3 @@
-import pickle
-from autoop.core.ml.artifact import Artifact
 from autoop.core.ml.model.model import Model
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier as DecTreeClass
@@ -23,24 +21,24 @@ class DecisionTreeClassifier(Model):
         """
         Initializes a DecisionTreeClassifier model instance.
 
-        This constructor initializes a Sklearn DecisionTreeClassifier model 
-        and sets up the model's hyperparameters in the _parameters attribute. 
-        It is called with any additional arguments passed to the parent class 
-        initializer, allowing customization of the DecisionTreeClassifier's 
+        This constructor initializes a Sklearn DecisionTreeClassifier model
+        and sets up the model's hyperparameters in the _parameters attribute.
+        It is called with any additional arguments passed to the parent class
+        initializer, allowing customization of the DecisionTreeClassifier's
         configuration.
 
         Args:
-            *args: Positional arguments passed to the DecisionTreeClassifier 
+            *args: Positional arguments passed to the DecisionTreeClassifier
             initializer.
-            **kwargs: Keyword arguments passed to the DecisionTreeClassifier 
+            **kwargs: Keyword arguments passed to the DecisionTreeClassifier
             initializer.
 
         Attributes:
             _type (str): The type of model, in this case, "classification".
-            _model (DecTreeClass): The Sklearn DecisionTreeClassifier model 
+            _model (DecTreeClass): The Sklearn DecisionTreeClassifier model
             instance, configured with the provided initialization arguments.
-            _parameters (dict): A dictionary holding the hyperparameters 
-            of the model, initialized with the DecisionTreeClassifier's 
+            _parameters (dict): A dictionary holding the hyperparameters
+            of the model, initialized with the DecisionTreeClassifier's
             parameters.
         """
         super().__init__()
@@ -49,7 +47,6 @@ class DecisionTreeClassifier(Model):
         self._parameters = {
             "hyperparameters": self._model.get_params()
         }
-
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         """
@@ -81,7 +78,6 @@ class DecisionTreeClassifier(Model):
                 "tree": self._model.tree_
             }
         })
-
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """

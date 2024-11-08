@@ -1,6 +1,5 @@
 from autoop.core.storage import LocalStorage
 from autoop.core.database import Database
-from autoop.core.ml.dataset import Dataset
 from autoop.core.ml.artifact import Artifact
 from autoop.core.storage import Storage
 from typing import List
@@ -8,19 +7,21 @@ from typing import List
 
 class ArtifactRegistry:
     """
-    Manages the registration, retrieval, listing, and deletion of artifacts, handling
+    Manages the registration, retrieval, listing, and
+    deletion of artifacts, handling
     interactions with the database and storage layers.
 
     Attributes:
         _database (Database): The database instance for metadata management.
-        _storage (Storage): The storage instance for handling artifact data storage.
+        _storage (Storage): The storage instance for handling artifact
+        data storage.
     """
-    def __init__(self, 
+    def __init__(self,
                  database: Database,
                  storage: Storage) -> None:
         """
         Initializes the ArtifactRegistry with a database and storage instance.
-        
+
         Args:
             database (Database): The database to store artifact metadata.
             storage (Storage): The storage system to handle artifact data.
@@ -28,13 +29,13 @@ class ArtifactRegistry:
         self._database = database
         self._storage = storage
 
-    def register(self, artifact: Artifact):
+    def register(self, artifact: Artifact) -> dict:
         """
         Registers a new artifact by storing its data and metadata.
 
         Args:
-            artifact (Artifact): The artifact to be registered, containing data, metadata,
-                                 and asset path.
+            artifact (Artifact): The artifact to be registered,
+            containing data, metadata, and asset path.
         """
         # Save the artifact data to storage
         self._storage.save(artifact.data, artifact.asset_path)
@@ -54,10 +55,12 @@ class ArtifactRegistry:
         Lists all artifacts in the database, optionally filtering by type.
 
         Args:
-            type (str, optional): Filter by artifact type. If None, lists all types.
+            type (str, optional): Filter by artifact type. If None, lists
+            all types.
 
         Returns:
-            List[Artifact]: A list of Artifact objects matching the specified type.
+            List[Artifact]: A list of Artifact objects matching the
+            specified type.
         """
         entries = self._database.list("artifacts")
         artifacts = []
@@ -99,7 +102,8 @@ class ArtifactRegistry:
 
     def delete(self, artifact_id: str) -> None:
         """
-        Deletes a specific artifact by its ID from both the storage and the database.
+        Deletes a specific artifact by its ID from both the storage
+        and the database.
 
         Args:
             artifact_id (str): The unique identifier of the artifact to delete.
@@ -127,8 +131,10 @@ class AutoMLSystem:
         Initializes the AutoMLSystem with storage and database instances.
 
         Args:
-            storage (LocalStorage): The local storage instance for storing assets.
-            database (Database): The database instance for storing artifact metadata.
+            storage (LocalStorage): The local storage instance for
+            storing assets.
+            database (Database): The database instance for storing
+            artifact metadata.
         """
         self._storage = storage
         self._database = database
@@ -137,7 +143,8 @@ class AutoMLSystem:
     @staticmethod
     def get_instance() -> "AutoMLSystem":
         """
-        Returns the singleton instance of the AutoMLSystem, initializing it if necessary.
+        Returns the singleton instance of the AutoMLSystem,
+        initializing it if necessary.
 
         Returns:
             AutoMLSystem: The singleton instance of AutoMLSystem.

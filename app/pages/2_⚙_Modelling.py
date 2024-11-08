@@ -26,7 +26,9 @@ def write_helper_text(text: str) -> None:
     st.write(f"<p style=\"color: #888;\">{text}</p>", unsafe_allow_html=True)
 
 
-def select_features(features: list[Feature]) -> tuple[list[Feature], Feature, str] | None:
+def select_features(features: list[Feature]) -> tuple[list[Feature],
+                                                      Feature,
+                                                      str] | None:
     """
     Allows the user to select input features and a target feature.
 
@@ -44,10 +46,12 @@ def select_features(features: list[Feature]) -> tuple[list[Feature], Feature, st
     )
 
     if len(selected_input_features) > len(feature_names) - 1:
-        st.error(f"You can select a maximum of {len(feature_names) - 1} features.")
+        st.error(f"Maximum {len(feature_names) - 1} features.")
     elif len(selected_input_features) == len(feature_names) - 1:
         selected_target_feature = [
-            name for name in feature_names if name not in selected_input_features
+            name for name in feature_names if(
+                name not in selected_input_features
+                )
         ][0]
 
         st.write(f"Input features: {selected_input_features}")
@@ -58,7 +62,10 @@ def select_features(features: list[Feature]) -> tuple[list[Feature], Feature, st
         ]
         selected_target_feature = feature_names[selected_target_feature]
 
-        task_type = "regression" if selected_target_feature.type == "numerical" else "categorical"
+        if selected_target_feature.type == "numerical":
+            task_type = "regression"
+        else:
+            task_type = "classification"
         st.write(f"Task type: {task_type}")
 
         return (selected_input_features, selected_target_feature, task_type)
@@ -71,7 +78,7 @@ def select_model(task_type: str) -> Model:
     Allows the user to select a model based on the task type.
 
     Args:
-        task_type (str): The type of task ("regression" or "categorical").
+        task_type (str): The type of task ("regression" or "classification").
 
     Returns:
         Model: Selected model object.
@@ -148,7 +155,8 @@ def serialize_data(pipeline: Pipeline) -> bytes:
     artifacts_data = {
         artifact.name: artifact.data for artifact in pipeline.artifacts
     }
-    artifacts_data.update({"model": pipeline.model, "metrics": pipeline.metrics})
+    artifacts_data.update({"model": pipeline.model,
+                           "metrics": pipeline.metrics})
     return pickle.dumps(artifacts_data)
 
 

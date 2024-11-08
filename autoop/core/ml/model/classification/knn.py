@@ -1,5 +1,3 @@
-import pickle
-from autoop.core.ml.artifact import Artifact
 from autoop.core.ml.model.model import Model
 import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
@@ -25,23 +23,23 @@ class KNearestNeighbors(Model):
 
         This constructor initializes a Sklearn KNeighborsClassifier model
         and sets up the model's hyperparameters in the _parameters attribute.
-        It is called with any additional arguments passed to the parent class 
-        initializer, allowing customization of the KNeighborsClassifier's 
+        It is called with any additional arguments passed to the parent class
+        initializer, allowing customization of the KNeighborsClassifier's
         configuration.
 
         Args:
-            *args: Positional arguments passed to the KNeighborsClassifier 
+            *args: Positional arguments passed to the KNeighborsClassifier
             initializer.
-            **kwargs: Keyword arguments passed to the KNeighborsClassifier 
+            **kwargs: Keyword arguments passed to the KNeighborsClassifier
             initializer.
 
         Attributes:
             _type (str): The type of model, in this case, "classification".
-            _model (KNeighborsClassifier): The Sklearn KNeighborsClassifier 
-            model instance, configured with the provided initialization 
+            _model (KNeighborsClassifier): The Sklearn KNeighborsClassifier
+            model instance, configured with the provided initialization
             arguments.
-            _parameters (dict): A dictionary holding the hyperparameters 
-            of the model, initialized with the KNeighborsClassifier's 
+            _parameters (dict): A dictionary holding the hyperparameters
+            of the model, initialized with the KNeighborsClassifier's
             parameters.
         """
         super()._init_()
@@ -64,7 +62,7 @@ class KNearestNeighbors(Model):
             None
         """
         X = np.asarray(X)
-        
+
         self._model.fit(X, y)
 
         # Add model parameters to _parameters
@@ -80,8 +78,7 @@ class KNearestNeighbors(Model):
             }
         })
 
-
-    def predict(self, X: np.ndarray) -> np.ndarray: 
+    def predict(self, X: np.ndarray) -> np.ndarray:
         """
         Predict method: predicts the label for each observation
 

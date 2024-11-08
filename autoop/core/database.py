@@ -1,5 +1,5 @@
 import json
-from typing import Dict, Tuple, List, Union
+from typing import Tuple, List, Union
 import os
 
 from autoop.core.storage import Storage
@@ -17,7 +17,8 @@ class Database:
 
     def __init__(self, storage: Storage) -> None:
         """
-        Initializes the Database with a storage instance and loads existing data.
+        Initializes the Database with a storage instance and loads
+        existing data.
 
         Args:
             storage (Storage): The storage instance for data persistence.
@@ -50,7 +51,8 @@ class Database:
             collection (str): The collection to get the data from
             id (str): The id of the data
         Returns:
-            Union[dict, None]: The data that was stored, or None if it doesn't exist
+            Union[dict, None]: The data that was stored,
+            or None if it doesn't exist
         """
         if not self._data.get(collection, None):
             return None
@@ -92,8 +94,8 @@ class Database:
             if not data:
                 continue
             for id, item in data.items():
-                self._storage.save(json.dumps(item).encode(), f"{collection}{os.sep}{id}")
-
+                self._storage.save(json.dumps(item).encode(),
+                                   f"{collection}{os.sep}{id}")
 
         # for things that were deleted, we need to remove them from the storage
         keys = self._storage.list("")

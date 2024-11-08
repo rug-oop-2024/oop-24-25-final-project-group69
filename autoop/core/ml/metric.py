@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Any
 import numpy as np
 
 METRICS = [
@@ -10,6 +9,7 @@ METRICS = [
     "micro_precision",
     "micro_recall"
 ]
+
 
 def get_metric(name: str) -> "Metric":
     """Factory function to get a metric by name.
@@ -33,6 +33,7 @@ def get_metric(name: str) -> "Metric":
     if name == "micro_recall":
         return MicroRecall()
 
+
 class Metric(ABC):
     """Base class for all metrics.
 
@@ -46,8 +47,9 @@ class Metric(ABC):
         pass
 
     @abstractmethod
-    def __call__(self, ground_truths: np.array, predictions: np.array) -> float:
-        """Calculate the metric value based on the given ground truths and 
+    def __call__(self, ground_truths: np.array,
+                 predictions: np.array) -> float:
+        """Calculate the metric value based on the given ground truths and
         predictions.
 
         Args:
@@ -60,8 +62,10 @@ class Metric(ABC):
         pass
 
     @abstractmethod
-    def evaluate(self, predictions: np.array, ground_truths: np.array) -> float:
-        """Evaluate the metric based on the given predictions and ground truths.
+    def evaluate(self, predictions: np.array,
+                 ground_truths: np.array) -> float:
+        """Evaluate the metric based on
+        the given predictions and ground truths.
 
         Args:
             predictions (np.array): One-dimensional array of predicted values.
@@ -77,21 +81,23 @@ class MeanSquaredError(Metric):
     """Class for the Mean Squared Error (MSE) metric."""
 
     def __str__(self) -> str:
-        """Return a string description of the Mean Squared Error metric."""
+        """Return a string description of the
+        Mean Squared Error metric."""
         return "Mean Squared Error Metric"
 
     def __call__(self, ground_truths: np.array, predictions: np.array) -> float:
-        """Calculate the Mean Squared Error (MSE) between the ground truths and 
+        """Calculate the Mean Squared Error (MSE) between the ground truths and
         predictions."""
         return np.square(np.subtract(ground_truths, predictions)).mean()
 
-    def evaluate(self, predictions: np.ndarray, ground_truths: np.ndarray) -> float:
+    def evaluate(self, predictions: np.ndarray,
+                 ground_truths: np.ndarray) -> float:
         """
-        Evaluate the Mean Squared Error (MSE) based on predictions and ground 
+        Evaluate the Mean Squared Error (MSE) based on predictions and ground
         truths.
 
         In this case, the ground truths and predictions are passed as they are.
-        There's no transformation (such as binarization or reshaping) required 
+        There's no transformation (such as binarization or reshaping) required
         for this metric.
 
         Args:
@@ -111,17 +117,20 @@ class MeanAbsoluteError(Metric):
         """Return a string description of the Mean Absolute Error metric."""
         return "Mean Absolute Error Metric"
 
-    def __call__(self, ground_truths: np.array, predictions: np.array) -> float:
-        """Calculate the Mean Absolute Error (MAE) between the ground truths and 
+    def __call__(self, ground_truths: np.array,
+                 predictions: np.array) -> float:
+        """Calculate the Mean Absolute Error (MAE)
+        between the ground truths and
         predictions."""
         return np.abs(np.subtract(ground_truths, predictions)).mean()
 
-    def evaluate(self, predictions: np.ndarray, ground_truths: np.ndarray) -> float:
+    def evaluate(self, predictions: np.ndarray,
+                 ground_truths: np.ndarray) -> float:
         """
-        Evaluate the Mean Absolute Error (MAE) based on predictions and ground 
+        Evaluate the Mean Absolute Error (MAE) based on predictions and ground
         truths.
 
-        No transformations are needed for the evaluation of MAE. Both the 
+        No transformations are needed for the evaluation of MAE. Both the
         ground truths and predictions are used directly in their current form.
 
         Args:
@@ -141,20 +150,23 @@ class RSquared(Metric):
         """Return a string description of the R^2 metric."""
         return "R Squared Metric"
 
-    def __call__(self, ground_truths: np.array, predictions: np.array) -> float:
-        """Calculate the R^2 score between the ground truths and predictions."""
+    def __call__(self, ground_truths: np.array,
+                 predictions: np.array) -> float:
+        """Calculate the R^2 score between the ground
+        truths and predictions."""
         corr_matrix = np.corrcoef(ground_truths, predictions)
         corr = corr_matrix[0, 1]
         R_sq = corr ** 2
         return R_sq
 
-    def evaluate(self, predictions: np.ndarray, ground_truths: np.ndarray) -> float:
+    def evaluate(self, predictions: np.ndarray,
+                 ground_truths: np.ndarray) -> float:
         """
         Evaluate the R^2 score based on predictions and ground truths.
 
-        In the case of R^2, the `ground_truths` and `predictions` are both 
-        flattened (i.e., converted to one-dimensional arrays) to ensure they 
-        are correctly aligned. The correlation coefficient between the two is 
+        In the case of R^2, the `ground_truths` and `predictions` are both
+        flattened (i.e., converted to one-dimensional arrays) to ensure they
+        are correctly aligned. The correlation coefficient between the two is
         calculated, and the R^2 value is returned.
 
         Args:
@@ -179,16 +191,18 @@ class Accuracy(Metric):
         """Return a string description of the Accuracy metric."""
         return "Accuracy Metric"
 
-    def __call__(self, ground_truths: np.array, predictions: np.array) -> float:
+    def __call__(self, ground_truths: np.array,
+                 predictions: np.array) -> float:
         """Calculate the Accuracy of the predictions."""
         return np.mean(ground_truths == predictions)
 
-    def evaluate(self, predictions: np.ndarray, ground_truths: np.ndarray) -> float:
+    def evaluate(self, predictions: np.ndarray,
+                 ground_truths: np.ndarray) -> float:
         """
         Evaluate the Accuracy based on predictions and ground truths.
 
-        This metric does not require any transformation of the input arrays. 
-        The `ground_truths` and `predictions` are directly compared to 
+        This metric does not require any transformation of the input arrays.
+        The `ground_truths` and `predictions` are directly compared to
         calculate the accuracy (i.e., the percentage of correct predictions).
 
         Args:
@@ -208,20 +222,23 @@ class MicroPrecision(Metric):
         """Return a string description of the Micro Precision metric."""
         return "Micro Precision Metric"
 
-    def __call__(self, ground_truths: np.array, predictions: np.array) -> float:
-        """Calculate the Micro Precision between ground truths and predictions."""
+    def __call__(self, ground_truths: np.array,
+                 predictions: np.array) -> float:
+        """Calculate the Micro Precision between
+        ground truths and predictions."""
         TP = np.sum(ground_truths & predictions)
         FP = np.sum((1 - ground_truths) & predictions)
         return TP / (TP + FP)
 
-    def evaluate(self, predictions: np.ndarray, ground_truths: np.ndarray) -> float:
+    def evaluate(self, predictions: np.ndarray,
+                 ground_truths: np.ndarray) -> float:
         """
         Evaluate the Micro Precision based on predictions and ground truths.
 
-        For micro-precision, the `ground_truths` and `predictions` are 
-        transformed into boolean arrays, where 1 indicates a positive class 
-        and 0 indicates a negative class. Then, the true positives (TP) and 
-        false positives (FP) are computed, and the micro-averaged precision is 
+        For micro-precision, the `ground_truths` and `predictions` are
+        transformed into boolean arrays, where 1 indicates a positive class
+        and 0 indicates a negative class. Then, the true positives (TP) and
+        false positives (FP) are computed, and the micro-averaged precision is
         calculated.
 
         Args:
@@ -246,22 +263,30 @@ class MicroRecall(Metric):
         """Return a string description of the Micro Recall metric."""
         return "Micro Recall Metric"
 
-    def __call__(self, ground_truths: np.array, predictions: np.array) -> float:
-        """Calculate the Micro Recall between ground truths and predictions."""
+    def __call__(self, ground_truths: np.array,
+                 predictions: np.array) -> float:
+        """Calculate the Micro Recall between
+        ground truths and predictions."""
         TP = np.sum(ground_truths & predictions)
         FN = np.sum(ground_truths & (1 - predictions))
         return TP / (TP + FN)
 
-    def evaluate(self, predictions: np.ndarray, ground_truths: np.ndarray) -> float:
+    def evaluate(self, predictions: np.ndarray,
+                 ground_truths: np.ndarray) -> float:
         """
-        Evaluate the Micro Recall based on predictions and ground truths.
+        Evaluate the Micro Recall based on
+        predictions and ground truths.
 
-        Similar to micro-precision, the `ground_truths` and `predictions` are 
-        transformed into boolean arrays. The true positives (TP) and false 
-        negatives (FN) are computed, and the micro-averaged recall is calculated.
+        Similar to micro-precision, the
+        `ground_truths` and `predictions` are
+        transformed into boolean arrays.
+        The true positives (TP) and false
+        negatives (FN) are computed, and
+        the micro-averaged recall is calculated.
 
         Args:
-            predictions (np.ndarray): 1D array of predicted values (0 or 1).
+            predictions (np.ndarray): 1D array
+            of predicted values (0 or 1).
             ground_truths (np.ndarray): 1D array of true values (0 or 1).
 
         Returns:
