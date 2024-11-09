@@ -62,6 +62,7 @@ class ARDRegression(Model):
             None
         """
         X = np.asarray(X)
+        y = np.asarray(y).flatten() 
 
         # Use the sklearn ARDRegression's fit method
         self._model.fit(X, y)

@@ -17,7 +17,7 @@ class Model():
         predict
     """
     _model = None
-    _parameters: dict
+    _parameters: dict = {}
     _type: str
     _artifact: Artifact
 

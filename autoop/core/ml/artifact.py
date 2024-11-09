@@ -131,7 +131,7 @@ class Artifact():
         """
         encoded_path = base64.b64encode(
             self.asset_path.encode()).decode('utf-8')
-        return f"{encoded_path}:{self.version}"
+        return f"{encoded_path}_{self.version}"
 
     def read(self) -> bytes:
         """Method for reading artifact data
@@ -145,7 +145,7 @@ class Artifact():
         Returns:
             bytes: saved data
         """
-        self.data = data
+        self._data = data
         os.makedirs(os.path.dirname(self.asset_path), exist_ok=True)
         with open(self.asset_path, 'wb') as file:
             file.write(self.data)

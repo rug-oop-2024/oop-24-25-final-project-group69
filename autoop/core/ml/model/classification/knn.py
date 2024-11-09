@@ -17,7 +17,7 @@ class KNearestNeighbors(Model):
         predict
     """
 
-    def _init_(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         """
         Initializes a K Nearest Neighbors (KNN) model instance.
 
@@ -42,7 +42,7 @@ class KNearestNeighbors(Model):
             of the model, initialized with the KNeighborsClassifier's
             parameters.
         """
-        super()._init_()
+        super().__init__()
         self._type = "classification"
         self._model = KNeighborsClassifier(*args, **kwargs)
         self._parameters = {
@@ -68,13 +68,13 @@ class KNearestNeighbors(Model):
         # Add model parameters to _parameters
         self._parameters.update({
             "strict parameters": {
-                "classes": self.model.classes,
-                "effective_metric": self.model.effective_metric,
+                "classes": self._model.classes_,
+                "effective_metric": self._model.effective_metric_,
                 "effective_metric_params":
-                    self.model.effective_metric_params,
-                "n_features_in": self.model.n_features_in,
-                "n_samples_fit": self.model.n_samples_fit,
-                "outputs_2d": self.model.outputs_2d
+                    self._model.effective_metric_params_,
+                "n_features_in": self._model.n_features_in_,
+                "n_samples_fit": self._model.n_samples_fit_,
+                "outputs_2d": self._model.outputs_2d_
             }
         })
 

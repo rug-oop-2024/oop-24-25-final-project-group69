@@ -73,7 +73,7 @@ automl = AutoMLSystem.get_instance()
 
 pipelines = automl.registry.list(type="pipeline")
 
-if pipelines:
+if pipelines is not None:
     selected_pipeline = load(pipelines)
 
     predictions = predict(selected_pipeline)

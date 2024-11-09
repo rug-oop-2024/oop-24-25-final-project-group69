@@ -66,8 +66,8 @@ class MultipleLinearRegression(Model):
         # Use the sklearn Lasso's fit method
         self._model.fit(X, y)
 
-        self._target_scaler = StandardScaler()
-        self._target_scaler.fit(y.reshape(-1, 1))
+        """self._target_scaler = StandardScaler()
+        self._target_scaler.fit(y.reshape(-1, 1))"""
 
         # Add the coef_ and intercept_ parameters
         # of the Sklearn Lasso model
@@ -95,6 +95,6 @@ class MultipleLinearRegression(Model):
         predictions = self._model.predict(X)
 
         # Inverse transform the predictions using the scaler
-        predictions = self._target_scaler.inverse_transform(
-            predictions.reshape(-1, 1)).flatten()
+        """predictions = self._target_scaler.inverse_transform(
+            predictions.reshape(-1, 1)).flatten()"""
         return predictions

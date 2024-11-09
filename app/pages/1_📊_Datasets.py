@@ -3,10 +3,11 @@ import pandas as pd
 
 from app.core.system import AutoMLSystem
 from autoop.core.ml.dataset import Dataset
-from streamlit.uploaded_file_manager import UploadedFile
+from typing import TypeVar
 
+File = TypeVar("File")
 
-def create(uploaded_file: UploadedFile) -> Dataset:
+def create(uploaded_file: File) -> Dataset:
     """
     Creates a Dataset instance from the uploaded CSV file.
 
@@ -45,8 +46,6 @@ def save(dataset: Dataset) -> None:
 
 
 automl = AutoMLSystem.get_instance()
-
-datasets = automl.registry.list(type="dataset")
 
 st.write("Datasets")
 

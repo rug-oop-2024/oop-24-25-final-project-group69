@@ -100,8 +100,7 @@ class LocalStorage(Storage):
         Raises:
             NotFoundError: If the path does not exist.
         """
-        replaced_key = key.replace(":", "_")
-        path = self._join_path(replaced_key)
+        path = self._join_path(key)
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, 'wb') as f:
             f.write(data)

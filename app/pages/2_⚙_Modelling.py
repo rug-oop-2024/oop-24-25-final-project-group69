@@ -26,6 +26,42 @@ def write_helper_text(text: str) -> None:
     st.write(f"<p style=\"color: #888;\">{text}</p>", unsafe_allow_html=True)
 
 
+def select_dataset(datasets: list[Artifact]) -> Dataset | None:
+    """
+    Allows the user to select a dataset from a list
+    of artifacts and reconstructs it from stored CSV data.
+
+    This function uses Streamlit's `selectbox` widget
+    to display a list of available datasets by name.
+    Upon selection, it retrieves the corresponding dataset
+    artifact, loads the CSV data from storage,
+    reads it into a DataFrame, and reconstructs a
+    `Dataset` object using the loaded data.
+
+    Args:
+        datasets (list[Artifact]): A list of `Artifact`
+        objects representing datasets available for selection.
+
+    Returns:
+        Dataset | None: The reconstructed `Dataset`
+        object if a dataset is selected, otherwise `None`.
+    """
+    datasets_by_name = {dataset.name: dataset for dataset in datasets}
+
+    if datasets_by_name:
+        selected_name = st.selectbox("Select a dataset", list(datasets_by_name))
+        selected_dataset = datasets_by_name[selected_name]
+        csv_data = automl.registry._storage.load(selected_dataset.asset_path)
+        df = pd.read_csv(BytesIO(csv_data))
+        recreated_dataset = Dataset.from_dataframe(
+            data=df,
+            name=selected_dataset.name,
+            asset_path=selected_dataset.asset_path
+        )
+        return recreated_dataset
+    return None
+
+
 def select_features(features: list[Feature]) -> tuple[list[Feature],
                                                       Feature,
                                                       str] | None:
@@ -38,28 +74,31 @@ def select_features(features: list[Feature]) -> tuple[list[Feature],
     Returns:
         tuple or None: Selected input features, target feature, task type.
     """
-    feature_names = {feature.name: feature for feature in features}
+    features_by_names = {feature.name: feature for feature in features}
 
     selected_input_features = st.multiselect(
-        "Select an input feature",
-        list(feature_names),
+        "Select the input features",
+        list(features_by_names),
     )
 
-    if len(selected_input_features) > len(feature_names) - 1:
-        st.error(f"Maximum {len(feature_names) - 1} features.")
-    elif len(selected_input_features) == len(feature_names) - 1:
-        selected_target_feature = [
-            name for name in feature_names if (
+    if 0 < len(selected_input_features) < len(features_by_names):
+        options_target_features = [
+            name for name in features_by_names if (
                 name not in selected_input_features)
-        ][0]
+        ]
+
+        selected_target_feature = st.selectbox(
+            "Select a target feature",
+            list(options_target_features)
+        )
 
         st.write(f"Input features: {selected_input_features}")
         st.write(f"Target feature: {selected_target_feature}")
 
         selected_input_features = [
-            feature_names[name] for name in selected_input_features
+            features_by_names[name] for name in selected_input_features
         ]
-        selected_target_feature = feature_names[selected_target_feature]
+        selected_target_feature = features_by_names[selected_target_feature]
 
         if selected_target_feature.type == "numerical":
             task_type = "regression"
@@ -188,31 +227,21 @@ write_helper_text("Design a machine learning pipeline to train a model.")
 automl = AutoMLSystem.get_instance()
 
 datasets = automl.registry.list(type="dataset")
+selected_dataset = select_dataset(datasets)
 
-datasets_by_name = {dataset.name: dataset for dataset in datasets}
-
-if datasets_by_name:
-    selected_name = st.selectbox("Select a dataset", list(datasets_by_name))
-    selected_dataset = datasets_by_name[selected_name]
-    csv_data = automl.registry._storage.load(selected_dataset.asset_path)
-    df = pd.read_csv(BytesIO(csv_data))
-    recreated_dataset = Dataset.from_dataframe(df, selected_dataset.name,
-                                               selected_dataset.asset_path)
-
-    features = detect_feature_types(recreated_dataset)
+if selected_dataset is not None:
+    features = detect_feature_types(selected_dataset)
     selection = select_features(features)
 
-    if selection:
+    if selection is not None:
         input_features, target_feature, task_type = selection
         model = select_model(task_type)
         split = select_split()
         metrics = select_metrics(task_type)
 
-        if split and metrics:
-            pipeline = Pipeline(metrics, recreated_dataset, model,
+        if split is not None and metrics is not None:
+            pipeline = Pipeline(metrics, selected_dataset, model,
                                 input_features, target_feature, split)
             summary(pipeline)
             train(pipeline)
             save(pipeline)
-    else:
-        st.write("You have not selected all input features yet...")

@@ -55,6 +55,7 @@ class Pipeline:
         self._metrics = metrics
         self._artifacts = {}
         self._split = split
+
         is_categorical = target_feature.type == "categorical"
         is_not_classification = model.type != "classification"
 
@@ -227,7 +228,6 @@ Pipeline(
         X = self._compact_vectors(self._train_X)
         Y = self._train_y
 
-        print(X, Y)
         self._model.fit(X, Y)
 
     def _evaluate(self) -> None:
