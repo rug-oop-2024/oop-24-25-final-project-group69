@@ -136,6 +136,52 @@ To evaluate the performance of machine learning models.
 **Reason**:  
 Each metric provides a quantitative measure of model accuracy, precision, or error.
 
+The following formulas were used for the metrics:
+## 1. **Mean Squared Error (MSE)**
+
+$\text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$
+
+- $\( y_i \)$ = ground truth value (true value)
+- $\( \hat{y}_i \)$ = predicted value
+- $\( n \)$ = number of samples
+
+## 2. **Mean Absolute Error (MAE)**
+
+$\text{MAE} = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|$
+
+- $\( y_i \)$ = ground truth value
+- $\( \hat{y}_i \)$ = predicted value
+- $\( n \)$ = number of samples
+
+## 3. **R Squared (R²)**
+
+$R^2 = (\text{corr}(y, \hat{y}))^2$
+
+- $\( \text{corr}(y, \hat{y}) \)$ is the Pearson correlation coefficient.
+
+## 4. **Accuracy**
+
+$\text{Accuracy} = \frac{\text{Number of Correct Predictions}}{\text{Total Number of Predictions}} = \frac{\sum_{i=1}^{n} \mathbb{1}(y_i = \hat{y}_i)}{n}$
+
+- $\( y_i \)$ = ground truth label
+- $\( \hat{y}_i \)$ = predicted label
+- $\( n \)$ = number of samples
+- $\( \mathbb{1} \)$ is an indicator function that is 1 if $\( y_i = \hat{y}_i \)$, otherwise 0.
+
+## 5. **Micro Precision**
+
+$\text{Micro Precision} = \frac{\text{True Positives (TP)}}{\text{True Positives (TP)} + \text{False Positives (FP)}}$
+
+- **True Positives (TP)**: The number of positive instances correctly predicted as positive.
+- **False Positives (FP)**: The number of negative instances incorrectly predicted as positive.
+
+## 6. **Micro Recall**
+
+$\text{Micro Recall} = \frac{\text{True Positives (TP)}}{\text{True Positives (TP)} + \text{False Negatives (FN)}}$
+
+- **True Positives (TP)**: The number of positive instances correctly predicted as positive.
+- **False Negatives (FN)**: The number of positive instances incorrectly predicted as negative.
+
 **Limitations**:  
 Some metrics, like R_square, assume specific data distributions.
 
@@ -189,8 +235,19 @@ It was necessary to validate the value of this dataset since the input and targe
 
 **Alternatives**: Reinstantiate the pipeline with the selected dataset.
 
+DSC-0011: Metrics getter
+==========================
 
-DSC-0011: Split values
+**Date**: 2024-10-25  
+**Decision**: Implement a getter for _metrics attribute in the Pipeline class.
+**Status**: Accepted  
+
+**Motivation**: On the Modelling page, the metrics need to be put in the serialized data dictionary containing the other pipeline components and, to that end, we need to safely access the list containing them.
+
+**Reason**: Leakage prevention.
+
+
+DSC-0012: Split values
 ==========================
 
 **Date**: 2024-10-25  
@@ -207,7 +264,7 @@ Therefore, to prevent any problems, we made the minimum split value 0.2 and it i
 **Alternatives**: Add warning message specifically for KNN predictions, to encourage user to choose a larger split value.
 
 
-DSC-0012: Dictionaries with artifact names as keys and artficacts as values
+DSC-0013: Dictionaries with artifact names as keys and artficacts as values
 ==========================
 
 **Date**: 2024-10-25  
