@@ -49,7 +49,8 @@ def select_dataset(datasets: list[Artifact]) -> Dataset | None:
     datasets_by_name = {dataset.name: dataset for dataset in datasets}
 
     if datasets_by_name:
-        selected_name = st.selectbox("Select a dataset", list(datasets_by_name))
+        selected_name = st.selectbox("Select a dataset",
+                                     list(datasets_by_name))
         selected_dataset = datasets_by_name[selected_name]
         csv_data = automl.registry._storage.load(selected_dataset.asset_path)
         df = pd.read_csv(BytesIO(csv_data))

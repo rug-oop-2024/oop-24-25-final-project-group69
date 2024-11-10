@@ -6,6 +6,7 @@ from autoop.core.ml.dataset import Dataset
 from autoop.core.ml.model import Model
 from autoop.core.ml.feature import Feature
 from autoop.core.ml.metric import Metric
+from autoop.functional.feature import detect_feature_types
 from autoop.functional.preprocessing import preprocess_features
 import numpy as np
 
@@ -98,18 +99,35 @@ Pipeline(
     @dataset.setter
     def dataset(self, dataset: Dataset) -> None:
         """
-        Sets the dataset for the pipeline.
+        Assigns a dataset to the pipeline while
+        validating its feature types.
+
+        This method sets the dataset for the pipeline
+        and checks if the features
+        in the dataset align with the features
+        defined in the pipeline configuration.
 
         Args:
-            dataset (Dataset): The dataset instance to be used in the pipeline.
+            dataset (Dataset): A dataset
+            instance
 
         Raises:
-            ValueError: If the provided object is not of type Dataset.
+            ValueError: If any feature required
+            by the pipeline is missing from the dataset.
+            This includes both input features and
+            the target feature.
         """
-        if isinstance(dataset, Dataset):
-            self._dataset = dataset
-        else:
-            raise ValueError("Object is not of type Dataset")
+        features_pipeline = self._input_features
+        features_pipeline.append(self._target_feature)
+
+        features_dataset = detect_feature_types(dataset)
+
+        for feature_pipeline in features_pipeline:
+            if feature_pipeline not in features_dataset:
+                raise ValueError(
+                    "The dataset features don't match the pipeline's ones"
+                )
+        self._dataset = dataset
 
     @property
     def metrics(self) -> list[Metric]:

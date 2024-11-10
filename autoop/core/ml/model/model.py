@@ -19,7 +19,6 @@ class Model():
     _model = None
     _parameters: dict = {}
     _type: str
-    _artifact: Artifact
 
     @property
     def type(self) -> str:
@@ -85,5 +84,4 @@ class Model():
             model parameters.
         """
         data = pickle.dumps(self._parameters)
-        self._artifact = Artifact(name=name, data=data)
-        return self._artifact
+        return Artifact(name=name, data=data)

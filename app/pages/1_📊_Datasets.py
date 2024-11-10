@@ -7,6 +7,7 @@ from typing import TypeVar
 
 File = TypeVar("File")
 
+
 def create(uploaded_file: File) -> Dataset:
     """
     Creates a Dataset instance from the uploaded CSV file.

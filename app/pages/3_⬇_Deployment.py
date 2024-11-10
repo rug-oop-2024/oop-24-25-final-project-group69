@@ -63,8 +63,11 @@ def predict(pipeline: Pipeline) -> dict:
         dataset = Dataset.from_dataframe(data=df, name=file_name,
                                          asset_path=file_path)
 
-        pipeline.dataset = dataset
-        return pipeline.execute()
+        try:
+            pipeline.dataset = dataset
+            return pipeline.execute()
+        except ValueError as e:
+            st.write(f"Error: {str(e)}")
 
 
 st.set_page_config(page_title="Deployment", page_icon="⬇")
