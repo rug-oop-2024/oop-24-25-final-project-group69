@@ -52,7 +52,7 @@ def select_dataset(datasets: list[Artifact]) -> Dataset | None:
         selected_name = st.selectbox("Select a dataset",
                                      list(datasets_by_name))
         selected_dataset = datasets_by_name[selected_name]
-        csv_data = automl.registry._storage.load(selected_dataset.asset_path)
+        csv_data = selected_dataset.data
         df = pd.read_csv(BytesIO(csv_data))
         recreated_dataset = Dataset.from_dataframe(
             data=df,
@@ -138,8 +138,8 @@ def select_split() -> float:
     Returns:
         float: Split value entered by the user.
     """
-    return st.number_input("Enter split", min_value=0.01, max_value=0.99,
-                           step=0.01, format="%.2f")
+    return st.number_input("Enter split", min_value=0.2, max_value=0.95,
+                           step=0.05, format="%.2f")
 
 
 def select_metrics(task_type: str) -> list[Metric]:
@@ -228,21 +228,23 @@ write_helper_text("Design a machine learning pipeline to train a model.")
 automl = AutoMLSystem.get_instance()
 
 datasets = automl.registry.list(type="dataset")
-selected_dataset = select_dataset(datasets)
 
-if selected_dataset is not None:
-    features = detect_feature_types(selected_dataset)
-    selection = select_features(features)
+if datasets != []:
+    selected_dataset = select_dataset(datasets)
 
-    if selection is not None:
-        input_features, target_feature, task_type = selection
-        model = select_model(task_type)
-        split = select_split()
-        metrics = select_metrics(task_type)
+    if selected_dataset is not None:
+        features = detect_feature_types(selected_dataset)
+        selection = select_features(features)
 
-        if split is not None and metrics is not None:
-            pipeline = Pipeline(metrics, selected_dataset, model,
-                                input_features, target_feature, split)
-            summary(pipeline)
-            train(pipeline)
-            save(pipeline)
+        if selection is not None:
+            input_features, target_feature, task_type = selection
+            model = select_model(task_type)
+            split = select_split()
+            metrics = select_metrics(task_type)
+
+            if model is not None and split is not None and metrics is not None:
+                pipeline = Pipeline(metrics, selected_dataset, model,
+                                    input_features, target_feature, split)
+                summary(pipeline)
+                train(pipeline)
+                save(pipeline)

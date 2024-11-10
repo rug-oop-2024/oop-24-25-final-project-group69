@@ -1,7 +1,6 @@
 from autoop.core.ml.model.model import Model
 import numpy as np
 from sklearn.linear_model import Lasso as SklearnLasso
-from sklearn.preprocessing import StandardScaler
 
 
 class MultipleLinearRegression(Model):
@@ -34,10 +33,6 @@ class MultipleLinearRegression(Model):
             initialized with the provided arguments for Lasso.
             _parameters (dict): A dictionary holding the hyperparameters of
             the model, initialized with the Lasso model's parameters.
-            _target_scaler (StandardScaler or None): A scaler for
-            the target variable,
-            initialized as None but used for inverse transformation
-            during prediction.
         """
         super().__init__()
         self._type = "regression"
@@ -45,7 +40,6 @@ class MultipleLinearRegression(Model):
         self._parameters = {
             "hyperparameters": self._model.get_params()
         }
-        self._target_scaler = None
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         """
@@ -65,9 +59,6 @@ class MultipleLinearRegression(Model):
 
         # Use the sklearn Lasso's fit method
         self._model.fit(X, y)
-
-        self._target_scaler = StandardScaler()
-        self._target_scaler.fit(y.reshape(-1, 1))
 
         # Add the coef_ and intercept_ parameters
         # of the Sklearn Lasso model
@@ -92,9 +83,4 @@ class MultipleLinearRegression(Model):
             A numpy array of predicted values for each observation.
         """
         # Use Sklearn Lasso's predict method
-        predictions = self._model.predict(X)
-
-        # Inverse transform the predictions using the scaler
-        predictions = self._target_scaler.inverse_transform(
-            predictions.reshape(-1, 1)).flatten()
-        return predictions
+        return self._model.predict(X)

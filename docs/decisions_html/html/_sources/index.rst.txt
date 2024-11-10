@@ -1,0 +1,34 @@
+Final Project Documentation
+===========================
+
+Welcome to the Final Project's Documentation! This guide covers the key decisions of our project.
+
+Contents
+--------
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Documentation Structure:
+
+   docs
+
+Key Decisions
+=============
+
+Here are the core decisions and components implemented in this project.
+
+Decision Records
+----------------
+
+- **DSC-0001**: Decision Tree Classifier
+- **DSC-0002**: K-Nearest Neighbors (KNN)
+- **DSC-0003**: Random Forest Classifier
+- **DSC-0004**: ARD Regression
+- **DSC-0005**: Lasso Regression
+- **DSC-0006**: Ridge Regression
+- **DSC-0007**: Metrics Implementation
+- **DSC-0008**: Artifacts ID
+- **DSC-0009**: Execute Method Pipeline
+- **DSC-0010**: Dataset Getter and Setter
+- **DSC-0011**: Split Values
+- **DSC-0012**: Dictionaries with Artifact Names as Keys

@@ -36,8 +36,6 @@ class ARDRegression(Model):
             initialized with the provided arguments for the ARDRegression.
             _parameters (dict): A dictionary holding the hyperparameters of
             the model, initialized with the ARDRegression model's parameters.
-            _target_scaler (None): A placeholder for a potential target scaler
-            to be used in preprocessing.
         """
         super().__init__()
         self._type = "regression"
@@ -45,7 +43,6 @@ class ARDRegression(Model):
         self._parameters = {
             "hyperparameters": self._model.get_params()
         }
-        self._target_scaler = None
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         """

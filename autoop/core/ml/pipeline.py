@@ -225,7 +225,7 @@ Pipeline(
         self._test_y = self._output_vector[
             int(split * len(self._output_vector)):]
 
-    def _compact_vectors(self, vectors: List[np.array]) -> np.array:
+    def _compact_vectors(self, vectors: List[np.array]) -> np.ndarray:
         """
         Concatenates a list of numpy arrays into a single 2D array.
 

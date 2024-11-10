@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import Dict, List
 import base64
 
@@ -111,7 +112,7 @@ class Artifact():
         Returns:
             Dict[str, str]: A dictionary containing the metadata of the asset.
         """
-        return self._metadata
+        return deepcopy(self._metadata)
 
     @property
     def tags(self) -> List[str]:
@@ -121,7 +122,7 @@ class Artifact():
         Returns:
             List[str]: A list of tags associated with the asset.
         """
-        return self._tags
+        return deepcopy(self._tags)
 
     @property
     def id(self) -> str:

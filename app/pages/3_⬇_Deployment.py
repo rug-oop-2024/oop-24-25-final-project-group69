@@ -23,7 +23,7 @@ def load(pipelines: list[Artifact]) -> Pipeline:
     selected_name = st.selectbox("Select a pipeline", list(pipelines_by_names))
     selected_pipeline = pipelines_by_names[selected_name]
 
-    artifact_data = automl.registry._storage.load(selected_pipeline.asset_path)
+    artifact_data = selected_pipeline.data
     deserialized_data = pickle.loads(artifact_data)
 
     # Extract and recreate the pipeline configuration
@@ -76,7 +76,7 @@ automl = AutoMLSystem.get_instance()
 
 pipelines = automl.registry.list(type="pipeline")
 
-if pipelines is not None:
+if pipelines != []:
     selected_pipeline = load(pipelines)
 
     predictions = predict(selected_pipeline)

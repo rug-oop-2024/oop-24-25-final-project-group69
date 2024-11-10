@@ -91,7 +91,7 @@ class LocalStorage(Storage):
 
     def save(self, data: bytes, key: str) -> None:
         """
-        Save data to a file using a sanitized key as the filename.
+        Save data to a file using a key as the filename.
 
         Args:
             data (bytes): Data to save.

@@ -2,12 +2,12 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 METRICS = [
-    "mean_squared_error",
-    "mean_absolute_error",
-    "R_squared",
-    "accuracy",
-    "micro_precision",
-    "micro_recall"
+    "Mean Squared Error",
+    "Mean Absolute Error",
+    "R Squared",
+    "Accuracy",
+    "Micro Precision",
+    "Micro Recall"
 ]
 
 
@@ -20,17 +20,17 @@ def get_metric(name: str) -> "Metric":
     Returns:
         Metric: a metric instance corresponding to the given name.
     """
-    if name == "mean_squared_error":
+    if name == "Mean Squared Error":
         return MeanSquaredError()
-    if name == "mean_absolute_error":
+    if name == "Mean Absolute Error":
         return MeanAbsoluteError()
-    if name == "R_squared":
+    if name == "R Squared":
         return RSquared()
-    if name == "accuracy":
+    if name == "Accuracy":
         return Accuracy()
-    if name == "micro_precision":
+    if name == "Micro Precision":
         return MicroPrecision()
-    if name == "micro_recall":
+    if name == "Micro Recall":
         return MicroRecall()
 
 
@@ -47,23 +47,8 @@ class Metric(ABC):
         pass
 
     @abstractmethod
-    def __call__(self, ground_truths: np.array,
-                 predictions: np.array) -> float:
-        """Calculate the metric value based on the given ground truths and
-        predictions.
-
-        Args:
-            ground_truths (np.array): One-dimensional array of ground truths.
-            predictions (np.array): One-dimensional array of predictions.
-
-        Returns:
-            float: The calculated metric value.
-        """
-        pass
-
-    @abstractmethod
-    def evaluate(self, predictions: np.array,
-                 ground_truths: np.array) -> float:
+    def evaluate(self, predictions: np.ndarray,
+                 ground_truths: np.ndarray) -> float:
         """Evaluate the metric based on
         the given predictions and ground truths.
 
@@ -84,13 +69,6 @@ class MeanSquaredError(Metric):
         """Return a string description of the
         Mean Squared Error metric."""
         return "Mean Squared Error Metric"
-
-    def __call__(self,
-                 ground_truths: np.array,
-                 predictions: np.array) -> float:
-        """Calculate the Mean Squared Error (MSE) between the ground truths and
-        predictions."""
-        return np.square(np.subtract(ground_truths, predictions)).mean()
 
     def evaluate(self, predictions: np.ndarray,
                  ground_truths: np.ndarray) -> float:
@@ -119,13 +97,6 @@ class MeanAbsoluteError(Metric):
         """Return a string description of the Mean Absolute Error metric."""
         return "Mean Absolute Error Metric"
 
-    def __call__(self, ground_truths: np.array,
-                 predictions: np.array) -> float:
-        """Calculate the Mean Absolute Error (MAE)
-        between the ground truths and
-        predictions."""
-        return np.abs(np.subtract(ground_truths, predictions)).mean()
-
     def evaluate(self, predictions: np.ndarray,
                  ground_truths: np.ndarray) -> float:
         """
@@ -152,15 +123,6 @@ class RSquared(Metric):
         """Return a string description of the R^2 metric."""
         return "R Squared Metric"
 
-    def __call__(self, ground_truths: np.array,
-                 predictions: np.array) -> float:
-        """Calculate the R^2 score between the ground
-        truths and predictions."""
-        corr_matrix = np.corrcoef(ground_truths, predictions)
-        corr = corr_matrix[0, 1]
-        R_sq = corr ** 2
-        return R_sq
-
     def evaluate(self, predictions: np.ndarray,
                  ground_truths: np.ndarray) -> float:
         """
@@ -180,8 +142,18 @@ class RSquared(Metric):
         """
         ground_truths = ground_truths.flatten()
         predictions = predictions.flatten()
+
+        # Check for zero variance to avoid NaN
+        if np.std(ground_truths) == 0 or np.std(predictions) == 0:
+            return 0.0
+
         corr_matrix = np.corrcoef(ground_truths, predictions)
         corr = corr_matrix[0, 1]
+
+        # Avoid NaN again
+        if np.isnan(corr):
+            return 0.0
+
         R_sq = corr ** 2
         return R_sq
 
@@ -192,11 +164,6 @@ class Accuracy(Metric):
     def __str__(self) -> str:
         """Return a string description of the Accuracy metric."""
         return "Accuracy Metric"
-
-    def __call__(self, ground_truths: np.array,
-                 predictions: np.array) -> float:
-        """Calculate the Accuracy of the predictions."""
-        return np.mean(ground_truths == predictions)
 
     def evaluate(self, predictions: np.ndarray,
                  ground_truths: np.ndarray) -> float:
@@ -223,14 +190,6 @@ class MicroPrecision(Metric):
     def __str__(self) -> str:
         """Return a string description of the Micro Precision metric."""
         return "Micro Precision Metric"
-
-    def __call__(self, ground_truths: np.array,
-                 predictions: np.array) -> float:
-        """Calculate the Micro Precision between
-        ground truths and predictions."""
-        TP = np.sum(ground_truths & predictions)
-        FP = np.sum((1 - ground_truths) & predictions)
-        return TP / (TP + FP)
 
     def evaluate(self, predictions: np.ndarray,
                  ground_truths: np.ndarray) -> float:
@@ -264,14 +223,6 @@ class MicroRecall(Metric):
     def __str__(self) -> str:
         """Return a string description of the Micro Recall metric."""
         return "Micro Recall Metric"
-
-    def __call__(self, ground_truths: np.array,
-                 predictions: np.array) -> float:
-        """Calculate the Micro Recall between
-        ground truths and predictions."""
-        TP = np.sum(ground_truths & predictions)
-        FN = np.sum(ground_truths & (1 - predictions))
-        return TP / (TP + FN)
 
     def evaluate(self, predictions: np.ndarray,
                  ground_truths: np.ndarray) -> float:
